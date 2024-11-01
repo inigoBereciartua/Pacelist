@@ -21,21 +21,13 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     @Override
     public void onAuthenticationSuccess(jakarta.servlet.http.HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response, Authentication authentication) throws IOException {
         HttpSession session = request.getSession();
-        DefaultSavedRequest initialRequest = (DefaultSavedRequest) session.getAttribute("SPRING_SECURITY_SAVED_REQUEST");
-        String requestQuery = initialRequest.getQueryString();
-        String[] queryParts = requestQuery.split("&");
-        String callbackUri = null;
-        for (String queryPart : queryParts) {
-            if (queryPart.contains("redirectUri")) {
-                callbackUri = queryPart.split("=")[1];
-                break;
-            }
-        }
-        if (callbackUri != null) {
-            session.removeAttribute("redirectUri");
-            response.sendRedirect(callbackUri);
+        String callbackUrl = (String) session.getAttribute("callbackUrl");
+
+        if (callbackUrl != null) {
+            session.removeAttribute("callbackUrl");
+            response.sendRedirect(callbackUrl);
         } else {
-            response.sendRedirect("/default-success-url");  // Fallback URL if no callback is provided (?)
+            response.sendRedirect("/default-success-url");
         }
     }
 }

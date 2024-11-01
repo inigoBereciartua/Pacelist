@@ -76,31 +76,11 @@ export default {
         async getUser() {
             const toast = useToast();
             try {
-                const response = await fetch(`${API_URL}/spotify/userinfo`, {
+                const response = await fetch(`${API_URL}/api/profile`, {
                     credentials: 'include'
                 });
-
                 if (response.ok) {
-                    const rawData = await response.text();
-
-                    let data;
-                    try {
-                        data = JSON.parse(rawData);
-
-                        if (typeof data === 'string') {
-                            // For some reason the data is double-encoded
-                            data = JSON.parse(data);
-                        }
-
-                        if (data && data.username) {
-                            this.username = data.id;
-                        } else {
-                            toast.error('An error has occured while processing user information request');
-                        }
-                    } catch (error) {
-                        toast.error('An error has occured while processing user information request');
-                        return;
-                    }
+                    this.username = await response.text();
                 } else {
                     toast.error('An error has occured while processing user information request');
                 }

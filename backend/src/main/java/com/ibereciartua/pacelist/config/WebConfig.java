@@ -27,14 +27,15 @@ public class WebConfig {
                 allowedOrigins.add("https://" + currentDomain);
                 if (currentDomain.equals("localhost")) {
                     allowedOrigins.add("http://localhost:8080");
+                    allowedOrigins.add("http://localhost:8081");
                 }
 
                 registry.addMapping("/**")
-                        .allowedOrigins(
-                                allowedOrigins.toArray(new String[0])
-                        )
+                        .allowedOrigins(allowedOrigins.toArray(new String[0]))
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowCredentials(true);
+
+                allowedOrigins.forEach(origin -> System.out.println("Allowed origin: " + origin));
             }
         };
     }

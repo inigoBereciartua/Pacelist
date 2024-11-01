@@ -1,5 +1,6 @@
 package com.ibereciartua.pacelist.service;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -14,12 +15,21 @@ public class AuthService {
         this.authorizedClientService = authorizedClientService;
     }
 
+    private OAuth2AuthenticationToken getOAuth2AuthenticationToken() {
+        return (OAuth2AuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+    }
 
-    public String getAccessToken(final OAuth2AuthenticationToken authentication) {
+    public String getAccessToken() {
+        OAuth2AuthenticationToken authentication = getOAuth2AuthenticationToken();
         OAuth2AuthorizedClient client = authorizedClientService.loadAuthorizedClient(
                 authentication.getAuthorizedClientRegistrationId(),
                 authentication.getName());
         return client.getAccessToken().getTokenValue();
+    }
+
+    public String getName() {
+        OAuth2AuthenticationToken authentication = getOAuth2AuthenticationToken();
+        return authentication.getName();
     }
 
 
