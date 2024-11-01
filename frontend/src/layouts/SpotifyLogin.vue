@@ -15,7 +15,8 @@
 </template>
 
 <script>
-import { API_URL } from '../utils/api';
+
+import {API_URL} from "@/utils/api";
 
 export default {
   name: 'SpotifyLogin',
