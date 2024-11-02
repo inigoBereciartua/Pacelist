@@ -112,8 +112,6 @@ export default {
                     credentials: 'include'
                 });
 
-                console.log({response});
-
                 if (response.ok) {
                     const rawData = await response.text();
 

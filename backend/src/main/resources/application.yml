@@ -19,6 +19,10 @@ spring:
             user-name-attribute: id
 server:
   port: 8080
+  servlet:
+    session:
+      cookie:
+        name: __session
 app:
   current-domain: ${CURRENT_DOMAIN:localhost}
 
