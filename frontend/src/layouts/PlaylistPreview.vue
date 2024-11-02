@@ -108,7 +108,7 @@ export default {
         async getTracksForSession(pace, distance, height) {
             const toast = useToast();
             try {
-                const response = await fetch(`${API_URL}/runningsession/playlist?pace=${pace}&distance=${distance}&height=${height}`, {
+                const response = await fetch(`${API_URL}/api/playlist?pace=${pace}&distance=${distance}&height=${height}`, {
                     credentials: 'include'
                 });
 
