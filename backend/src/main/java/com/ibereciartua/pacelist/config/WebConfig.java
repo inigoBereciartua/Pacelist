@@ -32,7 +32,7 @@ public class WebConfig {
 
                 registry.addMapping("/**")
                         .allowedOrigins(allowedOrigins.toArray(new String[0]))
-                        .allowedMethods("GET", "POST", "PUT", "DELETE")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowCredentials(true);
 
                 allowedOrigins.forEach(origin -> System.out.println("Allowed origin: " + origin));

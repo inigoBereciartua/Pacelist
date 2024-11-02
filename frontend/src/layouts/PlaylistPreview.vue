@@ -156,7 +156,7 @@ export default {
             };
 
             this.loading = true;
-            fetch(`${API_URL}/spotify/playlist`, {
+            fetch(`${API_URL}/api/playlist`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -1,5 +1,6 @@
 package com.ibereciartua.pacelist.service;
 
+import com.ibereciartua.pacelist.domain.NewPlaylist;
 import com.ibereciartua.pacelist.domain.PlaylistResponse;
 import com.ibereciartua.pacelist.domain.Song;
 import org.springframework.stereotype.Service;
@@ -56,5 +57,9 @@ public class PlaylistService {
         double cadence = metersPerMinute / strideLength;
 
         return (int) Math.round(cadence);
+    }
+
+    public void addPlaylist(NewPlaylist request) {
+        spotifyService.addPlaylist(request);
     }
 }

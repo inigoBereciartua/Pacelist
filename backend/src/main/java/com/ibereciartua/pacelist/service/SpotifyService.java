@@ -1,5 +1,6 @@
 package com.ibereciartua.pacelist.service;
 
+import com.ibereciartua.pacelist.domain.NewPlaylist;
 import com.ibereciartua.pacelist.domain.Song;
 import com.ibereciartua.pacelist.domain.exception.SongSearchException;
 import com.ibereciartua.pacelist.driver.SpotifyConnector;
@@ -30,5 +31,15 @@ public class SpotifyService {
             throw new SongSearchException("Error getting songs from Spotify");
         }
 
+    }
+
+    public void addPlaylist(NewPlaylist request) {
+        String userId = authService.getName();
+        try {
+            spotifyConnector.createPlaylist(authService.getAccessToken(), userId, request);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error creating playlist");
+        }
     }
 }
