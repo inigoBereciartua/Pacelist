@@ -44,7 +44,7 @@
 <script>
 import { useToast } from "vue-toastification";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
-import { API_URL } from '../utils/api';
+import { API_URL } from '@/utils/api';
 import BackArrow from "@/components/BackArrow.vue";
 
 export default {
@@ -100,7 +100,7 @@ export default {
     computed: {
         currentSelectedSongsDurationInMinutes() {
             if (!this.playlist || !this.playlist.songs) {
-                return 0; // Handle case when playlist is not loaded
+                return 0; // TODO: Handle case when playlist is not loaded
             }
             const durationInSeconds = this.playlist.songs
                 .filter(song => this.selectedSongsIds.includes(song.id))
@@ -128,15 +128,9 @@ export default {
                     let data;
                     try {
                         data = JSON.parse(rawData);
-
-                        if (typeof data === 'string') {
-                            // For some reason the data is double-encoded
-                            data = JSON.parse(data);
-                        }
                         this.playlist = data;
                     } catch (error) {
                         toast.error('An error has occured while processing request');
-                        return;
                     }
                 } else {
                     toast.error('An error has occurred while fetching playlist:', response.statusText);
@@ -185,9 +179,6 @@ export default {
                 .catch(error => {
                     toast.error('Failed to submit selected songs:', error);
                 });
-        },
-        goBack() {
-            this.$router.go(-1);
         }
     }
 };
@@ -200,9 +191,6 @@ export default {
     align-items: center;
     padding: 15px 20px;
     width: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
     background-color: #121212;
     z-index: 10;
     box-sizing: border-box;

@@ -146,7 +146,7 @@ export default {
     color: white;
     width: 90%;
     max-width: 400px;
-    margin: 0 auto;
+    margin: 3em auto 0;
 }
 
 .form-group {
@@ -210,17 +210,9 @@ export default {
 }
 
 .disconnect-button {
-    background-color: #712323;
-    color: white;
-    border: none;
-    padding: 10px 20px;
+    background-color: transparent;
+    color: #e13131;
     font-size: 16px;
-    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.disconnect-button:hover {
-    background-color: #d91414;
 }
 </style>
