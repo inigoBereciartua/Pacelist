@@ -204,6 +204,13 @@ export default {
     margin-right: 10px;
 }
 
+.playlist-data {
+    background-color: #212121;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
 .track-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
