@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
@@ -22,13 +21,7 @@ public class WebConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                String currentDomain = variableUtils.getCurrentDomain();
-                List<String> allowedOrigins = new ArrayList<>();
-                allowedOrigins.add("https://" + currentDomain);
-                if (currentDomain.equals("localhost")) {
-                    allowedOrigins.add("http://localhost:8080");
-                    allowedOrigins.add("http://localhost:8081");
-                }
+                List<String> allowedOrigins = variableUtils.getAllowedOrigins();
 
                 registry.addMapping("/**")
                         .allowedOrigins(allowedOrigins.toArray(new String[0]))

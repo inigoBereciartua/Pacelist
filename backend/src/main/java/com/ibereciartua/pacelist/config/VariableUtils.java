@@ -3,12 +3,14 @@ package com.ibereciartua.pacelist.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 
 @Component
 public class VariableUtils {
 
-    @Value("${app.current-domain}")
-    private String currentDomain;
+    @Value("${app.allowed-origins}")
+    private List<String> allowedOrigins;
 
     @Value("${spring.security.oauth2.client.registration.spotify.client-id}")
     private String spotifyClientId;
@@ -19,8 +21,8 @@ public class VariableUtils {
     @Value("${spring.security.oauth2.client.registration.spotify.redirect-uri}")
     private String spotifyRedirectUri;
 
-    public String getCurrentDomain() {
-        return currentDomain;
+    public List<String> getAllowedOrigins() {
+        return allowedOrigins;
     }
 
     public String getSpotifyClientId() {

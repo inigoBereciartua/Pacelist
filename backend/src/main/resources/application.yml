@@ -24,5 +24,6 @@ server:
       cookie:
         name: __session
 app:
-  current-domain: ${CURRENT_DOMAIN:localhost}
+  allowed-origins: ${ALLOWED_ORIGINS:localhost:8080,localhost:8081}
+
 
