@@ -36,7 +36,7 @@ public class PlaylistService {
         while (totalDuration > neededDurationInSeconds) {
             int indexToRemove = songs.size() - 1;
             totalDuration = totalDuration - songs.get(indexToRemove).getDuration();
-            logger.info("Removing track: %s, Duration: %s".formatted(songs.get(indexToRemove).getName(), songs.get(indexToRemove).getDuration()));
+            logger.info("Removing track: %s, Duration: %s".formatted(songs.get(indexToRemove).getTitle(), songs.get(indexToRemove).getDuration()));
             songs.remove(indexToRemove);
         }
         logger.info("Total duration: %s. Duration needed: %s. Duration with extra needed: %s.".formatted(totalDuration, durationInSeconds, neededDurationInSeconds));

@@ -1,6 +1,11 @@
 <template>
     <div>
-        <back-arrow/>
+        <div class="header">
+            <back-arrow/>
+            <div class="spotify-attribution">
+                Data provided by Spotify
+            </div>
+        </div>
         <div v-if="playlist" class="recent-tracks">
             <h2>{{ playlist.name }}</h2>
             <div class="playlist-data">
@@ -16,13 +21,18 @@
                         v-for="(track, index) in playlist.songs"
                         :key="index"
                         :class="{ 'selected-song': selectedSongsIds.includes(track.id) }"
-                        :style="{ backgroundColor: selectedSongsIds.includes(track.id) ? '#182c25' : '#455b55' }"
+                        :style="{ backgroundColor: selectedSongsIds.includes(track.id) ? '#1b3b33' : '#455b55' }"
                         class="track-item"
                         @click="toggleSelection(track.id)"
                     >
+                        <div class="checkmark-overlay" v-if="selectedSongsIds.includes(track.id)">
+                            ✓
+                        </div>
                         <img :src="track.picture" alt="Album Cover" class="album-cover" />
-                        <p class="track-name"><strong>{{ track.title }}</strong></p>
-                        <p class="artist-name">by {{ track.artist }}</p>
+                        <p class="track-name" :class="{ 'selected-text': selectedSongsIds.includes(track.id) }">
+                            <strong>{{ track.title }}</strong>
+                        </p>
+                        <p class="artist-name" :class="{ 'selected-text': selectedSongsIds.includes(track.id) }">by {{ track.artist }}</p>
                     </div>
                 </div>
             </div>
@@ -184,90 +194,114 @@ export default {
 </script>
 
 <style scoped>
-.spotify-container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: Arial, sans-serif;
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #121212;
+    z-index: 10;
+    box-sizing: border-box;
 }
 
-.recent-tracks {
-    margin-top: 20px;
-}
-
-.playlist-data {
-  background-color: #212121;
-  padding: 20px;
-  border-radius: 10px;
-  margin-bottom: 20px; /* Adds space at the bottom of the playlist card */
+.spotify-attribution {
+    font-size: 12px;
+    color: #1db954;
+    font-weight: bold;
+    white-space: nowrap;
+    margin-right: 10px;
 }
 
 .track-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Responsive grid */
-  gap: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 20px;
 }
 
 .track-item {
-  text-align: center;
-  border: 1px solid #333;
-  border-radius: 10px;
-  padding: 10px;
-  color: white;
-  transition: transform 0.2s ease;
-  cursor: pointer;
+    text-align: center;
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 10px;
+    color: white;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    cursor: pointer;
+    position: relative;
 }
 
 .track-item:hover {
-  transform: scale(1.05); /* Slight zoom on hover */
+    transform: scale(1.05);
+    background-color: #3b4b4a;
 }
 
 .album-cover {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  margin-bottom: 10px;
-  border-radius: 8px;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border-radius: 8px;
 }
 
 .track-name {
-  font-size: 14px;
-  font-weight: bold;
-  margin: 5px 0;
-  color: white;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 5px 0;
+    color: white;
 }
 
 .artist-name {
-  font-size: 12px;
-  color: grey;
+    font-size: 12px;
+    color: grey;
 }
 
 .selected-song {
-  border-color: #306844;
-  border-width: 3px;
-  border-style: solid;
+    border-color: #1db954;
+    border-width: 3px;
+    border-style: solid;
+    background-color: #1b3b33;
+}
+
+.selected-text {
+    font-weight: bold;
+    color: #d4f0e2;
+}
+
+.checkmark-overlay {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    font-size: 16px;
+    color: #1db954;
+    background-color: rgba(0, 0, 0, 0.9);
+    padding: 2px 6px;
+    border-radius: 50%;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
 }
 
 progress {
-  width: 100%;
-  height: 20px;
-  border-radius: 10px;
-  overflow: hidden;
+    width: 100%;
+    height: 20px;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 progress::-webkit-progress-bar {
-  background-color: #182c25;
-  border-radius: 10px;
+    background-color: #182c25;
+    border-radius: 10px;
 }
 
 progress::-webkit-progress-value {
-  background-color: #1db954;
-  border-radius: 10px;
+    background-color: #1db954;
+    border-radius: 10px;
 }
 
 .submit-container {
-  text-align: center;
-  margin-top: 20px;
+    text-align: center;
+    margin-top: 20px;
 }
 
 </style>

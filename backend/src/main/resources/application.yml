@@ -24,6 +24,6 @@ server:
       cookie:
         name: __session
 app:
-  allowed-origins: ${ALLOWED_ORIGINS:localhost:8080,localhost:8081}
+  allowed-origins: ${ALLOWED_ORIGINS:http://localhost:8080,http://localhost:8081}
 
 

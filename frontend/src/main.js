@@ -5,7 +5,7 @@ import Toast from 'vue-toastification';
 import 'vue-toastification/dist/index.css';
 
 
-document.title = 'Sportify';
+document.title = 'Pacelist';
 
 const app = createApp(App);
 

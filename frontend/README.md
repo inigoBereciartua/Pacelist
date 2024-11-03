@@ -1,4 +1,4 @@
-# Sportify
+# Pacelist
 
 ## Project setup
 ```

@@ -26,7 +26,6 @@ body, html {
   color: #fff;
   box-sizing: border-box;
   /* prevent view from "touching" bottom edge */
-  padding-bottom: 20px;
 }
 
 #app {
@@ -37,7 +36,6 @@ body, html {
   height: 100%;
   padding: 20px;
   box-sizing: border-box; /* Ensure padding is included in the width */
-  padding-bottom: 20px;
 }
 
 button {

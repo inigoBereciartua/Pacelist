@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibereciartua.pacelist.domain.NewPlaylist;
 import com.ibereciartua.pacelist.domain.Song;
-import com.nimbusds.openid.connect.sdk.claims.UserInfo;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -123,7 +122,7 @@ public class SpotifyConnector {
 
                 Song song = new Song();
                 song.setId(trackId);
-                song.setName(matchingTrack.get("name").asText());
+                song.setTitle(matchingTrack.get("name").asText());
                 song.setArtist(matchingTrack.get("artists").get(0).get("name").asText());
                 song.setAlbum(matchingTrack.get("album").get("name").asText());
                 song.setPicture(matchingTrack.get("album").get("images").get(0).get("url").asText());

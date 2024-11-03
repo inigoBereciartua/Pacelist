@@ -1,6 +1,8 @@
 <template>
     <div>
-        <back-arrow />
+        <div class="header">
+            <back-arrow text="Logout"/>
+        </div>
         <div class="spotify-container">
             <div v-if="playlist == null" class="centered-content">
                 <h1 v-if="username">Welcome, {{ username }}!</h1>
@@ -40,6 +42,9 @@
                         </div>
                     </form>
                 </div>
+                <button @click="disconnectSpotify" class="disconnect-button">
+                    Disconnect from Spotify
+                </button>
             </div>
         </div>
     </div>
@@ -48,7 +53,7 @@
 
 <script>
 import { useToast } from "vue-toastification";
-import { API_URL } from '../utils/api';
+import { API_URL } from '@/utils/api';
 import BackArrow from "@/components/BackArrow.vue";
 
 export default {
@@ -99,6 +104,14 @@ export default {
                 }
             });
         },
+        disconnectSpotify() {
+            fetch(`${API_URL}/auth/logout`, { method: "GET", credentials: "include" })
+                .then(() => {
+                    this.$router.push({ name: 'SpotifyLogin' });
+                    window.location.href = 'https://www.spotify.com/account/apps/';
+                })
+                .catch(error => console.error("Failed to disconnect:", error));
+        }
     }
 };
 </script>
@@ -108,7 +121,6 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
     font-family: Arial, sans-serif;
     padding: 20px;
     color: white;
@@ -122,7 +134,6 @@ export default {
 .intro-text {
     margin-bottom: 20px;
     color: #b3b3b3;
-    /* Subtle gray for introduction text */
 }
 
 .form-container {
@@ -164,7 +175,6 @@ export default {
     padding: 8px;
     border: 1px solid #455b55;
     border-radius: 5px 0 0 5px;
-    /* Rounded left corners */
     text-align: left;
 }
 
@@ -173,9 +183,7 @@ export default {
     background-color: #333;
     border: 1px solid #455b55;
     border-left: none;
-    /* Prevents double border */
     border-radius: 0 5px 5px 0;
-    /* Rounded right corners */
     font-size: 0.9em;
     color: #b3b3b3;
     text-align: center;
@@ -199,5 +207,20 @@ export default {
 
 .submit-container button:hover {
     background-color: #1ed760;
+}
+
+.disconnect-button {
+    background-color: #712323;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.disconnect-button:hover {
+    background-color: #d91414;
 }
 </style>

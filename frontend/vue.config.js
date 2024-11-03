@@ -5,7 +5,7 @@ module.exports = defineConfig({
   pages: {
     index: {
       entry: 'src/main.js', // Adjust if main entry is different
-      title: 'Sportify',
+      title: 'Pacelist',
     },
   },
 });
