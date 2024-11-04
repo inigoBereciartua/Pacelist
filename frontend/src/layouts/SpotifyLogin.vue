@@ -23,6 +23,11 @@
                     </a>
                 </div>
             </div>
+            <div class="repository-section">
+                <a href="https://github.com/inigoBereciartua/Pacelist" target="_blank" class="contact-link">
+                    <img src="@/assets/github.svg" alt="GitHub Icon" class="contact-icon" /> GitHub Repository
+                </a>
+            </div>
         </div>
     </div>
 </template>
@@ -138,5 +143,11 @@ h1 {
     height: 16px;
     margin-right: 5px;
     filter: brightness(0) saturate(100%) invert(44%) sepia(55%) saturate(262%) hue-rotate(89deg) brightness(95%) contrast(91%);
+}
+
+.repository-section {
+    margin-top: 20px;
+    font-size: 0.9em;
+    text-align: center;
 }
 </style>
