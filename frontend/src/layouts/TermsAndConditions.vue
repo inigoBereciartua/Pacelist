@@ -15,13 +15,13 @@
                 <h2>2. Data Collection and Usage</h2>
                 <p>
                     This app connects to your Spotify account to access limited data necessary for core functionality, including:
+                </p>
                 <ul>
                     <li>Displaying your Spotify username.</li>
                     <li>Accessing your liked songs to create personalized playlists.</li>
                     <li>Creating and managing playlists based on your preferences.</li>
                 </ul>
-                We do <strong>not</strong> store any data permanently. All sessions and data are stored temporarily in memory and are cleared upon logout or session expiration.
-                </p>
+                <p>We do <strong>not</strong> store any data permanently. All sessions and data are stored temporarily in memory and are cleared upon logout or session expiration.</p>
             </section>
 
             <section>

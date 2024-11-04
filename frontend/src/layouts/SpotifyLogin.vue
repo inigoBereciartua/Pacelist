@@ -11,6 +11,18 @@
                 By logging in with Spotify, you agree to our
                 <router-link to="/terms-and-conditions" class="terms-link">Terms and Conditions</router-link>. This allows us to personalize playlists with songs you love!
             </p>
+            <div class="contact-section">
+                <p>Have questions or feedback? Reach out:</p>
+                <div class="contact-links">
+                    <a href="mailto:ibereciartua99@gmail.com" class="contact-link">
+                        <img src="@/assets/email.svg" alt="Email Icon" class="contact-icon" /> Email the Developer
+                    </a>
+                    |
+                    <a href="https://www.linkedin.com/in/i%C3%B1igo-bereciartua-rocha/" target="_blank" class="contact-link">
+                        <img src="@/assets/linkedin.svg" alt="LinkedIn Icon" class="contact-icon" /> LinkedIn
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -93,5 +105,38 @@ h1 {
     width: 24px;
     height: 24px;
     margin-right: 12px;
+}
+
+.contact-section {
+    margin-top: 20px;
+    color: #b3b3b3;
+    font-size: 0.9em;
+    text-align: center;
+}
+
+
+.contact-link:hover {
+    text-decoration: underline;
+}
+
+.contact-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+}
+.contact-link {
+    display: flex;
+    align-items: center;
+    color: #1DB954;
+    text-decoration: none;
+    margin: 0 5px;
+}
+
+.contact-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+    filter: brightness(0) saturate(100%) invert(44%) sepia(55%) saturate(262%) hue-rotate(89deg) brightness(95%) contrast(91%);
 }
 </style>
