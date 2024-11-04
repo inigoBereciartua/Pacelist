@@ -1,0 +1,11 @@
+{
+    "hosting": {
+      "rewrites": [{
+        "source": "**",
+        "run": {
+          "serviceId": "pacelist-app-back",
+          "region": "europe-west1"
+        }
+      }]
+    }
+  }
