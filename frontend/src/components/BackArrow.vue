@@ -21,11 +21,19 @@ export default {
         text: {
             type: String,
             default: ''
+        },
+        onClick: {
+            type: Function,
+            default: () => {}
         }
     },
     methods: {
         goBack() {
-            this.$router.go(-1);
+            if (this.onClick) {
+                this.onClick();
+            } else {
+                this.$router.go(-1);
+            }
         }
     }
 };

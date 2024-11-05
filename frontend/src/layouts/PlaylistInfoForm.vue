@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="header">
-            <back-arrow text="Logout"/>
+            <back-arrow text="Logout" :onClick="onLogout" />
         </div>
         <div class="spotify-container">
             <div v-if="playlist == null" class="centered-content">
@@ -116,6 +116,15 @@ export default {
                     // Already disconnected
                     this.$router.replace({ name: 'SpotifyLogin'});
                     window.location.href = 'https://www.spotify.com/account/apps/';
+                });
+        },
+        onLogout() {
+            fetch(`${API_URL}/auth/logout`, { method: "GET", credentials: "include" })
+                .then(() => {
+                    this.$router.replace({ name: 'SpotifyLogin'});
+                })
+                .catch(() => {
+                    this.$router.replace({ name: 'SpotifyLogin'});
                 });
         }
     }
