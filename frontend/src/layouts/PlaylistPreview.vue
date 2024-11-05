@@ -3,7 +3,9 @@
         <div class="header">
             <back-arrow/>
             <div class="spotify-attribution">
-                Data provided by Spotify
+                <a href="https://www.spotify.com/" target="_blank" class="contact-link">
+                    <img src="@/assets/spotify-icon.png" alt="Spotify Icon" class="spotify-icon" /> Data provided by Spotify
+                </a>
             </div>
         </div>
         <div v-if="playlist" class="recent-tracks">
@@ -202,6 +204,13 @@ export default {
     font-weight: bold;
     white-space: nowrap;
     margin-right: 10px;
+}
+
+.spotify-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+    filter: brightness(0) saturate(100%) invert(44%) sepia(55%) saturate(262%) hue-rotate(89deg) brightness(95%) contrast(91%);
 }
 
 .playlist-data {
