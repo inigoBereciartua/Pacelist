@@ -87,9 +87,11 @@ export default {
                 if (response.ok) {
                     this.username = await response.text();
                 } else {
+                    this.$router.replace({ name: 'SpotifyLogin'});
                     toast.error('An error has occured while processing user information request');
                 }
             } catch (error) {
+                this.$router.replace({ name: 'SpotifyLogin'});
                 toast.error('An error has occured while processing user information request');
             }
         },
@@ -107,10 +109,14 @@ export default {
         disconnectSpotify() {
             fetch(`${API_URL}/auth/logout`, { method: "GET", credentials: "include" })
                 .then(() => {
-                    this.$router.push({ name: 'SpotifyLogin' });
+                    this.$router.replace({ name: 'SpotifyLogin'});
                     window.location.href = 'https://www.spotify.com/account/apps/';
                 })
-                .catch(error => console.error("Failed to disconnect:", error));
+                .catch(() => {
+                    // Already disconnected
+                    this.$router.replace({ name: 'SpotifyLogin'});
+                    window.location.href = 'https://www.spotify.com/account/apps/';
+                });
         }
     }
 };
