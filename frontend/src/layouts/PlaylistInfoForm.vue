@@ -53,8 +53,9 @@
 
 <script>
 import { useToast } from "vue-toastification";
-import { API_URL } from '@/utils/api';
 import BackArrow from "@/components/BackArrow.vue";
+import profileApi from '@/api/profile';
+import { logout } from '@/api/auth';
 
 export default {
     name: 'PlaylistInfoForm',
@@ -80,23 +81,16 @@ export default {
     methods: {
         async getUser() {
             const toast = useToast();
-            try {
-                const response = await fetch(`${API_URL}/api/profile`, {
-                    credentials: 'include'
-                });
-                if (response.ok) {
-                    this.username = await response.text();
-                } else {
+            profileApi.getData(this)
+                .then((response) => {
+                    this.username = response;
+                })
+                .catch(() => {
                     this.$router.replace({ name: 'SpotifyLogin'});
                     toast.error('An error has occured while processing user information request');
-                }
-            } catch (error) {
-                this.$router.replace({ name: 'SpotifyLogin'});
-                toast.error('An error has occured while processing user information request');
-            }
+                });
         },
         submitForm() {
-            // Go to PlaylistPreview passing form data
             this.$router.push({
                 name: 'PlaylistPreview',
                 query: {
@@ -107,25 +101,13 @@ export default {
             });
         },
         disconnectSpotify() {
-            fetch(`${API_URL}/auth/logout`, { method: "GET", credentials: "include" })
-                .then(() => {
-                    this.$router.replace({ name: 'SpotifyLogin'});
-                    window.location.href = 'https://www.spotify.com/account/apps/';
-                })
-                .catch(() => {
-                    // Already disconnected
-                    this.$router.replace({ name: 'SpotifyLogin'});
-                    window.location.href = 'https://www.spotify.com/account/apps/';
-                });
+            logout();
+            this.$router.replace({ name: 'SpotifyLogin'});
+            window.location.href = 'https://www.spotify.com/account/apps/';
         },
         onLogout() {
-            fetch(`${API_URL}/auth/logout`, { method: "GET", credentials: "include" })
-                .then(() => {
-                    this.$router.replace({ name: 'SpotifyLogin'});
-                })
-                .catch(() => {
-                    this.$router.replace({ name: 'SpotifyLogin'});
-                });
+            logout();
+            this.$router.replace({ name: 'SpotifyLogin'});
         }
     }
 };

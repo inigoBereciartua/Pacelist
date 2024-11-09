@@ -46,7 +46,7 @@
 <script>
 import { useToast } from "vue-toastification";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
-import { API_URL } from '@/utils/api';
+import playlistApi from '@/api/playlist';
 import BackArrow from "@/components/BackArrow.vue";
 
 export default {
@@ -119,27 +119,13 @@ export default {
     methods: {
         async getTracksForSession(pace, distance, height) {
             const toast = useToast();
-            try {
-                const response = await fetch(`${API_URL}/api/playlist?pace=${pace}&distance=${distance}&height=${height}`, {
-                    credentials: 'include'
+            playlistApi.getPlaylistProposal(this, pace, distance, height)
+                .then((response) => {
+                    this.playlist = response;
+                })
+                .catch(() => {
+                    toast.error('An error has occured while processing request');
                 });
-
-                if (response.ok) {
-                    const rawData = await response.text();
-
-                    let data;
-                    try {
-                        data = JSON.parse(rawData);
-                        this.playlist = data;
-                    } catch (error) {
-                        toast.error('An error has occured while processing request');
-                    }
-                } else {
-                    toast.error('An error has occurred while fetching playlist:', response.statusText);
-                }
-            } catch (error) {
-                toast.error('An error has occurred while fetching playlist:', error);
-            }
         },
         toggleSelection(songId) {
             const index = this.selectedSongsIds.indexOf(songId);
@@ -150,7 +136,6 @@ export default {
             }
         },
         submitSelectedSongs() {
-            // Send selected songs to the backend
             const toast = useToast();
             const request = {
                 name: this.playlist.name,
@@ -160,26 +145,16 @@ export default {
             };
 
             this.loading = true;
-            fetch(`${API_URL}/api/playlist`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(request),
-                credentials: 'include'
-            })
-                .then(response => {
+            playlistApi.savePlaylist(this, request)
+                .then(() => {
                     this.loading = false;
-                    if (response.ok) {
-                        toast.success('Playlist has been successfully created!');
-                        this.playlist = null;
-                        this.$router.push({ name: 'PlaylistInfoForm' });
-                    } else {
-                        toast.error('Failed to submit selected songs:', response.statusText);
-                    }
+                    this.playlist = null;
+                    toast.success('Playlist has been successfully created!');
+                    this.$router.push({ name: 'PlaylistInfoForm' });
                 })
-                .catch(error => {
-                    toast.error('Failed to submit selected songs:', error);
+                .catch(() => {
+                    this.loading = false;
+                    toast.error('Failed to submit selected songs');
                 });
         }
     }

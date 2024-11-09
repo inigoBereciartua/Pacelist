@@ -22,7 +22,7 @@
 		<developer/>
 	</developers>
 	<modules>
-		<module>api</module>
+		<module>app</module>
 		<module>music-connectors</module>
 	</modules>
 	<scm>

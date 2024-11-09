@@ -33,13 +33,21 @@
 </template>
 
 <script>
-import { API_URL } from "@/utils/api";
+import { API_URL } from "@/api/utils";
 
 export default {
     name: 'SpotifyLogin',
     methods: {
         loginWithSpotify() {
             window.location.href = `${API_URL}/auth/login?redirectUri=` + window.location.origin + '/playlist-info-form';
+        }
+    },
+    mounted() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        if (token) {
+            localStorage.setItem('access_token', token);
+            this.$router.push('/playlist-info-form');
         }
     }
 };
