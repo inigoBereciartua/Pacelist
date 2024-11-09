@@ -4,7 +4,7 @@ module.exports = defineConfig({
   transpileDependencies: true,
   pages: {
     index: {
-      entry: 'src/main.js', // Adjust if main entry is different
+      entry: 'src/main.js',
       title: 'Pacelist',
     },
   },
