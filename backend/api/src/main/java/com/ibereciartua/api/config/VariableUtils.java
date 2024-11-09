@@ -5,12 +5,17 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-
 @Component
 public class VariableUtils {
 
     @Value("${app.allowed-origins}")
     private List<String> allowedOrigins;
+
+    @Value("${app.jwt-secret-key}")
+    private String jwtSecretKey;
+
+    @Value("${app.login-redirect-url}")
+    private String loginRedirectUrl;
 
     @Value("${spring.security.oauth2.client.registration.spotify.client-id}")
     private String spotifyClientId;
@@ -23,6 +28,14 @@ public class VariableUtils {
 
     public List<String> getAllowedOrigins() {
         return allowedOrigins;
+    }
+
+    public String getJwtSecretKey() {
+        return jwtSecretKey;
+    }
+
+    public String getLoginRedirectUrl() {
+        return loginRedirectUrl;
     }
 
     public String getSpotifyClientId() {

@@ -19,13 +19,9 @@ spring:
             user-name-attribute: id
 server:
   port: 8080
-  servlet:
-    session:
-      cookie:
-        name: __session
-        http-only: true
-        secure: true
 app:
   allowed-origins: ${ALLOWED_ORIGINS:http://localhost:8080,http://localhost:8081}
+  jwt-secret-key: ${JWT_SECRET_KEY:secret}
+  login-redirect-url: ${LOGIN_REDIRECT_URL:http://localhost:8081/login}
 
 
