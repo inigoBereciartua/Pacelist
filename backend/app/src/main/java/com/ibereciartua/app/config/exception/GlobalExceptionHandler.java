@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -46,6 +45,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = { BadRequestErrorException.class })
     protected ResponseEntity<Object> handleBadRequest(final RuntimeException e, final WebRequest request) {
         logger.warn("Bad Request: " + e.getMessage());
+        return handleExceptionInternal(e, new ApiError(e), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler(value = { IllegalArgumentException.class })
+    protected ResponseEntity<Object> handleIllegalArgumentException(final IllegalArgumentException e, final WebRequest request) {
+        logger.error("Invalid arguments", e);
         return handleExceptionInternal(e, new ApiError(e), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 

@@ -15,7 +15,7 @@ public class PlaylistService {
     private final SpotifyService spotifyService;
     private final AuthService authService;
 
-    private static final double EXTRA_MINUTES_COEFFICIENT = 2.4;
+    private static final double PLAYLIST_EXTRA_MINUTES_COEFFICIENT = 2.4;
     private static final double STRIDE_LENGTH_COEFFICIENT = 0.413;
     private static final int BPM_THRESHOLD = 10;
 
@@ -24,13 +24,16 @@ public class PlaylistService {
         this.authService = authService;
     }
 
-    public PlaylistResponse getPlaylistProposal(Float paceInMinPerKm, Float distance, Float height) {
+    public PlaylistResponse getPlaylistProposal(float paceInMinPerKm, float distance, float height) {
+        if (paceInMinPerKm <= 0 || distance <= 0 || height <= 0) {
+            throw new IllegalArgumentException("Invalid parameters");
+        }
         int bpm = calculateBPM(paceInMinPerKm, height) / 2; // Half of the cadence so beats are realistic for running
         float durationInSeconds = paceInMinPerKm * distance * 60;
         String token = authService.getAccessToken();
         int cumulativeDuration = 0;
         int offset = 0;
-        int neededDurationInSeconds = (int) (durationInSeconds * EXTRA_MINUTES_COEFFICIENT);
+        int neededDurationInSeconds = (int) (durationInSeconds * PLAYLIST_EXTRA_MINUTES_COEFFICIENT);
         List<Song> songs = new ArrayList<>();
 
         while (cumulativeDuration < neededDurationInSeconds) {
@@ -66,7 +69,7 @@ public class PlaylistService {
         return (int) Math.round(cadence);
     }
 
-    public void addPlaylist(NewPlaylistRequest request) {
+    public void createPlaylist(NewPlaylistRequest request) {
         Playlist playlist = new Playlist();
         playlist.setName(request.getName());
         playlist.setSongIds(request.getSongIds());
