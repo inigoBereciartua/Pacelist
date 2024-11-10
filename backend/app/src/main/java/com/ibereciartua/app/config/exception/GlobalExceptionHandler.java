@@ -26,7 +26,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    // -----------------------------------------------------------------------------------------------------------------
     // Default application crash response
 
     @Bean

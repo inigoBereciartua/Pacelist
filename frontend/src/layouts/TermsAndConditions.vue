@@ -90,7 +90,7 @@ export default {
     },
     methods: {
         goBack() {
-            this.$router.go(-1); // Go back to the previous page
+            this.$router.go(-1);
         }
     }
 };
