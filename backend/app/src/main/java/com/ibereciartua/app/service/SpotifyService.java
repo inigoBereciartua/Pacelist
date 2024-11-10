@@ -21,10 +21,9 @@ public class SpotifyService {
         this.spotifyConnector = new SpotifyConnector();
     }
 
-    public List<Song> getSongs(int bpmTarget, int bpmThreshold) {
-        String accessToken = authService.getAccessToken();
+    public List<Song> getSongs(final String accessToken, final int offset) {
         try {
-            return spotifyConnector.getUserTracksByBpm(accessToken, bpmTarget, bpmThreshold, LIMIT);
+            return spotifyConnector.getUserTracks(accessToken, offset);
         } catch (Exception e) {
             e.printStackTrace();
             throw new SongSearchException("Error getting songs from Spotify");

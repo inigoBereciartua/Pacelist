@@ -9,6 +9,7 @@ public class Song {
     private String artist;
     private String album;
     private String picture;
+    private int bpm;
     private LocalDateTime playedDate;
     private int duration;
 
@@ -50,6 +51,14 @@ public class Song {
 
     public void setPicture(String picture) {
         this.picture = picture;
+    }
+
+    public int getBpm() {
+        return bpm;
+    }
+
+    public void setBpm(int bpm) {
+        this.bpm = bpm;
     }
 
     public LocalDateTime getPlayedDate() {

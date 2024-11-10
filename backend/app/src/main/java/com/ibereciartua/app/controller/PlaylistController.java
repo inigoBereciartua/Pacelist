@@ -18,7 +18,7 @@ public class PlaylistController {
 
     @GetMapping
     public ResponseEntity<PlaylistResponse> getPlaylist(@RequestParam("pace") Float pace, @RequestParam("distance") Float distance, @RequestParam("height") Float height) {
-        return ResponseEntity.ok(playlistService.getPlaylist(pace, distance, height));
+        return ResponseEntity.ok(playlistService.getPlaylistProposal(pace, distance, height));
     }
 
     @PostMapping

@@ -6,41 +6,47 @@ import com.ibereciartua.app.domain.PlaylistResponse;
 import com.ibereciartua.commons.domain.Song;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 @Service
 public class PlaylistService {
 
     private final SpotifyService spotifyService;
-    private final Logger logger = Logger.getLogger(PlaylistService.class.getName());
+    private final AuthService authService;
 
     private static final double EXTRA_MINUTES_COEFFICIENT = 2.4;
     private static final double STRIDE_LENGTH_COEFFICIENT = 0.413;
     private static final int BPM_THRESHOLD = 10;
 
-    public PlaylistService(SpotifyService spotifyService) {
+    public PlaylistService(SpotifyService spotifyService, AuthService authService) {
         this.spotifyService = spotifyService;
+        this.authService = authService;
     }
 
-    public PlaylistResponse getPlaylist(Float paceInMinPerKm, Float distance, Float height) {
+    public PlaylistResponse getPlaylistProposal(Float paceInMinPerKm, Float distance, Float height) {
         int bpm = calculateBPM(paceInMinPerKm, height) / 2; // Half of the cadence so beats are realistic for running
         float durationInSeconds = paceInMinPerKm * distance * 60;
-        List<Song> songs = spotifyService.getSongs(bpm, BPM_THRESHOLD);
+        String token = authService.getAccessToken();
+        int cumulativeDuration = 0;
+        int offset = 0;
+        int neededDurationInSeconds = (int) (durationInSeconds * EXTRA_MINUTES_COEFFICIENT);
+        List<Song> songs = new ArrayList<>();
+
+        while (cumulativeDuration < neededDurationInSeconds) {
+            List<Song> newFetchedSongs = spotifyService.getSongs(token, offset);
+            if (newFetchedSongs.isEmpty()) {
+                break;
+            }
+            offset += newFetchedSongs.size();
+            newFetchedSongs.removeIf(song -> song.getBpm() < bpm - BPM_THRESHOLD || song.getBpm() > bpm + BPM_THRESHOLD);
+            cumulativeDuration += newFetchedSongs.stream().mapToInt(Song::getDuration).sum();
+            songs.addAll(newFetchedSongs);
+        }
         if (songs.isEmpty()) {
             throw new RuntimeException("No songs found");
         }
 
-        int neededDurationInSeconds = (int) (durationInSeconds * EXTRA_MINUTES_COEFFICIENT);
-        int totalDuration = songs.stream().reduce(0, (acc, song) -> acc + song.getDuration(), Integer::sum);
-
-        while (totalDuration > neededDurationInSeconds) {
-            int indexToRemove = songs.size() - 1;
-            totalDuration = totalDuration - songs.get(indexToRemove).getDuration();
-            logger.info("Removing track: %s, Duration: %s".formatted(songs.get(indexToRemove).getTitle(), songs.get(indexToRemove).getDuration()));
-            songs.remove(indexToRemove);
-        }
-        logger.info("Total duration: %s. Duration needed: %s. Duration with extra needed: %s.".formatted(totalDuration, durationInSeconds, neededDurationInSeconds));
         String name = "Running Session - %skm - %smin/km - %s BPM ".formatted(distance, paceInMinPerKm, bpm);
         PlaylistResponse response = new PlaylistResponse();
         response.setName(name);
