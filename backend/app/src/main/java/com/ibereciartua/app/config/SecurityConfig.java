@@ -30,6 +30,8 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
     private final VariableUtils variableUtils;
 
+    private final String API_AUTHENTICATED_PATH = "/api/**";
+
     public SecurityConfig(final @Lazy OAuth2AuthorizedClientService authorizedClientService, final JwtUtil jwtUtil, VariableUtils variableUtils) {
         this.authorizedClientService = authorizedClientService;
         this.jwtUtil = jwtUtil;
@@ -47,13 +49,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/**", "/oauth2/**", "/login/**").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/**").authenticated()
+                        .requestMatchers(API_AUTHENTICATED_PATH).authenticated()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler(jwtAuthenticationSuccessHandler())
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, API_AUTHENTICATED_PATH), UsernamePasswordAuthenticationFilter.class)
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
