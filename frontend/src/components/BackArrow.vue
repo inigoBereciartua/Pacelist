@@ -24,7 +24,7 @@ export default {
         },
         onClick: {
             type: Function,
-            default: () => {}
+            default: null
         }
     },
     methods: {
