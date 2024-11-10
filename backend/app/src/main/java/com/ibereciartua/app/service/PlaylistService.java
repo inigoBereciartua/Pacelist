@@ -15,7 +15,7 @@ public class PlaylistService {
     private final SpotifyService spotifyService;
     private final Logger logger = Logger.getLogger(PlaylistService.class.getName());
 
-    private static final double EXTRA_MINUTES_COEFFICIENT = 2.4;
+    private static final double PLAYLIST_EXTRA_MINUTES_COEFFICIENT = 2.4;
     private static final double STRIDE_LENGTH_COEFFICIENT = 0.413;
     private static final int BPM_THRESHOLD = 10;
 
@@ -34,7 +34,7 @@ public class PlaylistService {
             throw new RuntimeException("No songs found");
         }
 
-        int neededDurationInSeconds = (int) (durationInSeconds * EXTRA_MINUTES_COEFFICIENT);
+        int neededDurationInSeconds = (int) (durationInSeconds * PLAYLIST_EXTRA_MINUTES_COEFFICIENT);
         int totalDuration = songs.stream().reduce(0, (acc, song) -> acc + song.getDuration(), Integer::sum);
 
         while (totalDuration > neededDurationInSeconds) {
@@ -63,7 +63,7 @@ public class PlaylistService {
         return (int) Math.round(cadence);
     }
 
-    public void addPlaylist(NewPlaylistRequest request) {
+    public void createPlaylist(NewPlaylistRequest request) {
         Playlist playlist = new Playlist();
         playlist.setName(request.getName());
         playlist.setSongIds(request.getSongIds());
