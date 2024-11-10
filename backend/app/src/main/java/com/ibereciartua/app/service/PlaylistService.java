@@ -1,5 +1,6 @@
 package com.ibereciartua.app.service;
 
+import com.ibereciartua.app.config.exception.BadRequestErrorException;
 import com.ibereciartua.app.domain.NewPlaylistRequest;
 import com.ibereciartua.commons.domain.Playlist;
 import com.ibereciartua.app.domain.PlaylistResponse;
@@ -23,7 +24,14 @@ public class PlaylistService {
         this.spotifyService = spotifyService;
     }
 
+<<<<<<< Updated upstream
     public PlaylistResponse getPlaylist(Float paceInMinPerKm, Float distance, Float height) {
+=======
+    public PlaylistResponse getPlaylistProposal(float paceInMinPerKm, float distance, float height) {
+        if (paceInMinPerKm <= 0 || distance <= 0 || height <= 0) {
+            throw new IllegalArgumentException("Invalid parameters");
+        }
+>>>>>>> Stashed changes
         int bpm = calculateBPM(paceInMinPerKm, height) / 2; // Half of the cadence so beats are realistic for running
         float durationInSeconds = paceInMinPerKm * distance * 60;
         List<Song> songs = spotifyService.getSongs(bpm, BPM_THRESHOLD);
