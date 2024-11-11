@@ -123,8 +123,13 @@ export default {
                 .then((response) => {
                     this.playlist = response;
                 })
-                .catch(() => {
-                    toast.error('An error has occured while processing request');
+                .catch(error => {
+                    if (error.response.status === 404) {
+                        toast.error('No tracks found for given parameters');
+                    } else {
+                        toast.error('An error has occured while processing request');
+                    }
+                    this.$router.replace({ name: 'PlaylistInfoForm' });
                 });
         },
         toggleSelection(songId) {

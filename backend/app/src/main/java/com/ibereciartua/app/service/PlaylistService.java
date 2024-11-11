@@ -1,6 +1,7 @@
 package com.ibereciartua.app.service;
 
 import com.ibereciartua.app.domain.NewPlaylistRequest;
+import com.ibereciartua.app.domain.exception.SongSearchException;
 import com.ibereciartua.app.factory.MusicConnectorFactory;
 import com.ibereciartua.commons.domain.Playlist;
 import com.ibereciartua.app.domain.PlaylistResponse;
@@ -62,7 +63,7 @@ public class PlaylistService {
             }
         }
         if (songs.isEmpty()) {
-            throw new RuntimeException("No songs found");
+            throw new SongSearchException("No songs found");
         }
 
         String name = "Running Session - %skm - %smin/km - %s BPM".formatted(distance, paceInMinPerKm, bpm);
