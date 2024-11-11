@@ -3,7 +3,7 @@ package com.ibereciartua.app.service;
 import com.ibereciartua.commons.domain.Playlist;
 import com.ibereciartua.commons.domain.Song;
 import com.ibereciartua.app.domain.exception.SongSearchException;
-import com.ibereciartua.connector.SpotifyConnector;
+import com.ibereciartua.connector.spotify.SpotifyConnector;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,7 +14,6 @@ public class SpotifyService {
     private final AuthService authService;
     private final SpotifyConnector spotifyConnector;
 
-    private static final int LIMIT = 300;
 
     public SpotifyService(AuthService authService) {
         this.authService = authService;

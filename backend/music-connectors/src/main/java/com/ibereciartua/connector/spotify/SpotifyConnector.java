@@ -1,11 +1,14 @@
-package com.ibereciartua.connector;
+package com.ibereciartua.connector.spotify;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibereciartua.commons.domain.Song;
 import com.ibereciartua.commons.domain.Playlist;
+import com.ibereciartua.connector.MusicConnector;
 import com.ibereciartua.domain.SpotifyPlaylist;
 import com.ibereciartua.domain.TrackUris;
+import com.ibereciartua.domain.exceptions.MusicConnectorException;
+import com.ibereciartua.domain.exceptions.PlaylistCreationException;
 
 import java.io.IOException;
 import java.net.URI;
@@ -22,7 +25,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-public class SpotifyConnector {
+public class SpotifyConnector implements MusicConnector {
 
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final Logger logger = Logger.getLogger(SpotifyConnector.class.getName());
@@ -32,15 +35,20 @@ public class SpotifyConnector {
 
     private static final int PAGE_SIZE = 50;
 
-    public List<Song> getUserTracks(String accessToken, int offset) throws IOException, InterruptedException, URISyntaxException {
-        List<JsonNode> allTracks = fetchTracks(accessToken, offset);
-        if (allTracks.isEmpty()) {
-            logger.info("No tracks found.");
-            return Collections.emptyList();
-        }
+    public List<Song> getUserTracks(String accessToken, int offset) throws MusicConnectorException {
+        try {
+            List<JsonNode> allTracks = fetchTracks(accessToken, offset);
+            if (allTracks.isEmpty()) {
+                logger.info("No tracks found.");
+                return Collections.emptyList();
+            }
 
-        List<JsonNode> audioFeatures = fetchAudioFeatures(accessToken, allTracks);
-        return mapToSongs(allTracks, audioFeatures);
+            List<JsonNode> audioFeatures = fetchAudioFeatures(accessToken, allTracks);
+            return mapToSongs(allTracks, audioFeatures);
+        } catch (Exception e) {
+            logger.warning("Failed to fetch user tracks.");
+            throw new MusicConnectorException("Failed to fetch user tracks.", e);
+        }
     }
 
     private List<JsonNode> fetchTracks(String accessToken, int offset) throws IOException, InterruptedException, URISyntaxException {
@@ -130,28 +138,41 @@ public class SpotifyConnector {
         return songs;
     }
 
-    public void createPlaylist(final String accessToken, final String userId, final Playlist newPlaylist) throws Exception {
-        SpotifyPlaylist playlist = SpotifyPlaylist.from(newPlaylist);
-        logger.info("Creating a new playlist on Spotify.");
+    public void createPlaylist(final String accessToken, final String userId, final Playlist newPlaylist) throws PlaylistCreationException {
+        try {
+            SpotifyPlaylist playlist = SpotifyPlaylist.from(newPlaylist);
+            logger.info("Creating a new playlist on Spotify.");
 
-        HttpRequest request = HttpRequest.newBuilder()
+            HttpRequest request = buildCreatePlaylistRequest(accessToken, userId, playlist);
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            checkCreatePlaylistResponse(response);
+
+            JsonNode createdPlaylist = objectMapper.readTree(response.body());
+            String playlistId = createdPlaylist.get("id").asText();
+            logger.info("Successfully created playlist with ID " + playlistId);
+
+            addTracksToPlaylist(accessToken, playlistId, playlist.songIds());
+        } catch (Exception e) {
+            logger.severe("Error creating playlist: " + e.getMessage());
+            throw new PlaylistCreationException("Error creating playlist", e);
+        }
+    }
+
+    private HttpRequest buildCreatePlaylistRequest(String accessToken, String userId, SpotifyPlaylist playlist) throws URISyntaxException, IOException {
+        return HttpRequest.newBuilder()
                 .uri(new URI("https://api.spotify.com/v1/users/" + userId + "/playlists"))
                 .header("Authorization", "Bearer " + accessToken)
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(playlist)))
                 .build();
+    }
 
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+    private void checkCreatePlaylistResponse(HttpResponse<String> response) throws PlaylistCreationException {
         if (response.statusCode() != 201) {
             logger.warning("Failed to create playlist. Status code: " + response.statusCode());
-            return;
+            throw new PlaylistCreationException("Failed to create playlist. Status code: " + response.statusCode());
         }
-
-        JsonNode createdPlaylist = objectMapper.readTree(response.body());
-        String playlistId = createdPlaylist.get("id").asText();
-        logger.info("Successfully created playlist with ID " + playlistId);
-
-        addTracksToPlaylist(accessToken, playlistId, playlist.songIds());
     }
 
     private void addTracksToPlaylist(String accessToken, String playlistId, List<String> songIds) throws Exception {

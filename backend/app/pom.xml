@@ -66,7 +66,7 @@
 
         <dependency>
             <groupId>com.ibereciartua</groupId>
-            <artifactId>spotify-connector</artifactId>
+            <artifactId>music-connectors</artifactId>
             <version>${parent.version}</version>
         </dependency>
     </dependencies>
