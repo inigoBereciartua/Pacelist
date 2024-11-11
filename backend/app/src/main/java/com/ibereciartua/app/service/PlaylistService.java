@@ -28,7 +28,7 @@ public class PlaylistService {
         if (paceInMinPerKm <= 0 || distance <= 0 || height <= 0) {
             throw new IllegalArgumentException("Invalid parameters");
         }
-        int bpm = calculateBPM(paceInMinPerKm, height) / 2; // Half of the cadence so beats are realistic for running
+        int bpm = calculateBPM(paceInMinPerKm, height);
         float durationInSeconds = paceInMinPerKm * distance * 60;
         String token = authService.getAccessToken();
         int cumulativeDuration = 0;
@@ -42,15 +42,20 @@ public class PlaylistService {
                 break;
             }
             offset += newFetchedSongs.size();
-            newFetchedSongs.removeIf(song -> song.getBpm() < bpm - BPM_THRESHOLD || song.getBpm() > bpm + BPM_THRESHOLD);
-            cumulativeDuration += newFetchedSongs.stream().mapToInt(Song::getDuration).sum();
-            songs.addAll(newFetchedSongs);
+            List<Song> bpmFilteredSongs = newFetchedSongs.stream().filter(song -> Math.abs(song.bpm() - bpm) <= BPM_THRESHOLD).toList();
+            for (Song song : bpmFilteredSongs) {
+                if (cumulativeDuration > neededDurationInSeconds) {
+                    break;
+                }
+                cumulativeDuration += song.duration();
+                songs.add(song);
+            }
         }
         if (songs.isEmpty()) {
             throw new RuntimeException("No songs found");
         }
 
-        String name = "Running Session - %skm - %smin/km - %s BPM ".formatted(distance, paceInMinPerKm, bpm);
+        String name = "Running Session - %skm - %smin/km - %s BPM".formatted(distance, paceInMinPerKm, bpm);
         PlaylistResponse response = new PlaylistResponse();
         response.setName(name);
         response.setBpm(bpm);
@@ -61,18 +66,17 @@ public class PlaylistService {
     }
 
     public static int calculateBPM(double paceInMinPerKm, double height) {
-
+        if (paceInMinPerKm <= 0 || height <= 0) {
+            throw new IllegalArgumentException("Invalid parameters");
+        }
         double metersPerMinute = 1000 / paceInMinPerKm;
         double strideLength = STRIDE_LENGTH_COEFFICIENT * (height / 100);
         double cadence = metersPerMinute / strideLength;
-
-        return (int) Math.round(cadence);
+        return (int) Math.round(cadence / 2);
     }
 
     public void createPlaylist(NewPlaylistRequest request) {
-        Playlist playlist = new Playlist();
-        playlist.setName(request.getName());
-        playlist.setSongIds(request.getSongIds());
+        Playlist playlist = new Playlist(request.getName(), request.getSongIds());
         spotifyService.addPlaylist(playlist);
     }
 }

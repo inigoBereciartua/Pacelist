@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibereciartua.commons.domain.Song;
 import com.ibereciartua.commons.domain.Playlist;
 import com.ibereciartua.domain.SpotifyPlaylist;
+import com.ibereciartua.domain.TrackUris;
 
 import java.io.IOException;
 import java.net.URI;
@@ -26,6 +27,8 @@ public class SpotifyConnector {
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final Logger logger = Logger.getLogger(SpotifyConnector.class.getName());
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    private final DateTimeFormatter playedAtFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssX");
 
     private static final int PAGE_SIZE = 50;
 
@@ -110,15 +113,14 @@ public class SpotifyConnector {
             if (matchingTrackItem != null) {
                 JsonNode matchingTrack = matchingTrackItem.get("track");
 
-                Song song = new Song();
-                song.setId(trackId);
-                song.setTitle(matchingTrack.get("name").asText());
-                song.setArtist(matchingTrack.get("artists").get(0).get("name").asText());
-                song.setAlbum(matchingTrack.get("album").get("name").asText());
-                song.setPicture(matchingTrack.get("album").get("images").get(0).get("url").asText());
-                song.setBpm(bpm);
-                song.setPlayedDate(parseDate(matchingTrackItem.get("added_at").asText()));
-                song.setDuration(matchingTrack.get("duration_ms").asInt() / 1000);
+                String title = matchingTrack.get("name").asText();
+                String artist = matchingTrack.get("artists").get(0).get("name").asText();
+                String album = matchingTrack.get("album").get("name").asText();
+                String picture = matchingTrack.get("album").get("images").get(0).get("url").asText();
+                LocalDateTime playedDate = LocalDateTime.parse(matchingTrackItem.get("added_at").asText(), playedAtFormatter.withZone(ZoneOffset.UTC));
+                int duration = matchingTrack.get("duration_ms").asInt() / 1000;
+
+                Song song = new Song(trackId, title, artist, album, picture, bpm, playedDate, duration);
 
                 songs.add(song);
             } else {
@@ -128,15 +130,8 @@ public class SpotifyConnector {
         return songs;
     }
 
-    private LocalDateTime parseDate(String date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssX");
-        return LocalDateTime.parse(date, formatter.withZone(ZoneOffset.UTC));
-    }
-
-
-
     public void createPlaylist(final String accessToken, final String userId, final Playlist newPlaylist) throws Exception {
-        SpotifyPlaylist playlist = new SpotifyPlaylist(newPlaylist.getName(), newPlaylist.getSongIds());
+        SpotifyPlaylist playlist = SpotifyPlaylist.from(newPlaylist);
         logger.info("Creating a new playlist on Spotify.");
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -156,7 +151,7 @@ public class SpotifyConnector {
         String playlistId = createdPlaylist.get("id").asText();
         logger.info("Successfully created playlist with ID " + playlistId);
 
-        addTracksToPlaylist(accessToken, playlistId, playlist.getSongIds());
+        addTracksToPlaylist(accessToken, playlistId, playlist.songIds());
     }
 
     private void addTracksToPlaylist(String accessToken, String playlistId, List<String> songIds) throws Exception {
@@ -176,8 +171,5 @@ public class SpotifyConnector {
         } else {
             logger.info("Successfully added tracks to playlist with ID " + playlistId);
         }
-    }
-
-    record TrackUris(List<String> uris) {
     }
 }

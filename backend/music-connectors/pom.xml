@@ -12,7 +12,6 @@
     <artifactId>music-connectors</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>commons</module>
         <module>spotify-connector</module>
     </modules>
 
@@ -21,6 +20,14 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.ibereciartua</groupId>
+            <artifactId>commons</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
