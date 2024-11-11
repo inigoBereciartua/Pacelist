@@ -1,27 +1,28 @@
 package com.ibereciartua.app.service;
 
 import com.ibereciartua.app.domain.NewPlaylistRequest;
+import com.ibereciartua.app.factory.MusicConnectorFactory;
 import com.ibereciartua.commons.domain.Playlist;
 import com.ibereciartua.app.domain.PlaylistResponse;
 import com.ibereciartua.commons.domain.Song;
+import com.ibereciartua.connector.MusicConnector;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PlaylistService {
-
-    private final SpotifyService spotifyService;
     private final AuthService authService;
-
+    private final MusicConnectorFactory musicConnectorFactory;
     private static final double PLAYLIST_EXTRA_MINUTES_COEFFICIENT = 2.4;
     private static final double STRIDE_LENGTH_COEFFICIENT = 0.413;
     private static final int BPM_THRESHOLD = 10;
 
-    public PlaylistService(SpotifyService spotifyService, AuthService authService) {
-        this.spotifyService = spotifyService;
+    public PlaylistService(final MusicConnectorFactory musicConnectorFactory, final AuthService authService) {
         this.authService = authService;
+        this.musicConnectorFactory = musicConnectorFactory;
     }
 
     public PlaylistResponse getPlaylistProposal(float paceInMinPerKm, float distance, float height) {
@@ -30,14 +31,23 @@ public class PlaylistService {
         }
         int bpm = calculateBPM(paceInMinPerKm, height);
         float durationInSeconds = paceInMinPerKm * distance * 60;
-        String token = authService.getAccessToken();
+
         int cumulativeDuration = 0;
         int offset = 0;
         int neededDurationInSeconds = (int) (durationInSeconds * PLAYLIST_EXTRA_MINUTES_COEFFICIENT);
         List<Song> songs = new ArrayList<>();
+        Optional<String> token = authService.getAccessToken();
+        if (token.isEmpty()) {
+            throw new RuntimeException("No access token found");
+        }
+        Optional<String> authenticatorProvider = authService.getAuthenticatorProvider();
+        if (authenticatorProvider.isEmpty()) {
+            throw new RuntimeException("No authenticator provider found");
+        }
+        MusicConnector musicConnector = musicConnectorFactory.getMusicConnector(authenticatorProvider.get());
 
         while (cumulativeDuration < neededDurationInSeconds) {
-            List<Song> newFetchedSongs = spotifyService.getSongs(token, offset);
+            List<Song> newFetchedSongs = musicConnector.getUserTracks(token.get(), offset);
             if (newFetchedSongs.isEmpty()) {
                 break;
             }
@@ -76,7 +86,20 @@ public class PlaylistService {
     }
 
     public void createPlaylist(NewPlaylistRequest request) {
+        Optional<String> authenticatorProvider = authService.getAuthenticatorProvider();
+        if (authenticatorProvider.isEmpty()) {
+            throw new RuntimeException("No authenticator provider found");
+        }
         Playlist playlist = new Playlist(request.getName(), request.getSongIds());
-        spotifyService.addPlaylist(playlist);
+        MusicConnector musicConnector = musicConnectorFactory.getMusicConnector(authenticatorProvider.get());
+        Optional<String> accessToken = authService.getAccessToken();
+        if (accessToken.isEmpty()) {
+            throw new RuntimeException("No access token found");
+        }
+        Optional<String> name = authService.getName();
+        if (name.isEmpty()) {
+            throw new RuntimeException("No user name found");
+        }
+        musicConnector.createPlaylist(accessToken.get(), name.get(), playlist);
     }
 }

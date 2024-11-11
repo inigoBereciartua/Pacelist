@@ -2,8 +2,8 @@ package com.ibereciartua.connector;
 
 import com.ibereciartua.commons.domain.Playlist;
 import com.ibereciartua.commons.domain.Song;
-import com.ibereciartua.domain.exceptions.MusicConnectorException;
-import com.ibereciartua.domain.exceptions.PlaylistCreationException;
+import com.ibereciartua.connector.exceptions.MusicConnectorException;
+import com.ibereciartua.connector.exceptions.PlaylistCreationException;
 
 import java.util.List;
 

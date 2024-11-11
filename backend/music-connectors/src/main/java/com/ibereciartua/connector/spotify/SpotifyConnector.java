@@ -5,10 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ibereciartua.commons.domain.Song;
 import com.ibereciartua.commons.domain.Playlist;
 import com.ibereciartua.connector.MusicConnector;
-import com.ibereciartua.domain.SpotifyPlaylist;
-import com.ibereciartua.domain.TrackUris;
-import com.ibereciartua.domain.exceptions.MusicConnectorException;
-import com.ibereciartua.domain.exceptions.PlaylistCreationException;
+import com.ibereciartua.connector.exceptions.MusicConnectorException;
+import com.ibereciartua.connector.exceptions.PlaylistCreationException;
 
 import java.io.IOException;
 import java.net.URI;
@@ -177,7 +175,7 @@ public class SpotifyConnector implements MusicConnector {
 
     private void addTracksToPlaylist(String accessToken, String playlistId, List<String> songIds) throws Exception {
         List<String> trackUris = songIds.stream().map(id -> "spotify:track:" + id).toList();
-        String uriJson = objectMapper.writeValueAsString(new TrackUris(trackUris));
+        String uriJson = objectMapper.writeValueAsString(new SpotifyTrackUris(trackUris));
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI("https://api.spotify.com/v1/playlists/" + playlistId + "/tracks"))

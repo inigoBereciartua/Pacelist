@@ -18,13 +18,18 @@ public class AuthService {
         return Optional.empty();
     }
 
-    public String getAccessToken() {
+    public Optional<String> getAccessToken() {
         Optional<CustomUserDetails> userContext = getUserContext();
-        return userContext.map(CustomUserDetails::getAccessToken).orElse(null);
+        return userContext.map(CustomUserDetails::getAccessToken);
     }
 
-    public String getName() {
+    public Optional<String> getName() {
         Optional<CustomUserDetails> userContext = getUserContext();
-        return userContext.map(CustomUserDetails::getUsername).orElse(null);
+        return userContext.map(CustomUserDetails::getUsername);
+    }
+
+    public Optional<String> getAuthenticatorProvider() {
+        Optional<CustomUserDetails> userContext = getUserContext();
+        return userContext.map(CustomUserDetails::getAuthenticationProvider);
     }
 }

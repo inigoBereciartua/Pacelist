@@ -1,7 +1,9 @@
 package com.ibereciartua.app.service;
 
 import com.ibereciartua.app.domain.PlaylistResponse;
+import com.ibereciartua.app.factory.MusicConnectorFactory;
 import com.ibereciartua.commons.domain.Song;
+import com.ibereciartua.connector.MusicConnector;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -19,7 +22,10 @@ import static org.mockito.Mockito.when;
 class PlaylistServiceTest {
 
     @Mock
-    SpotifyService spotifyService;
+    MusicConnectorFactory musicConnectorFactory;
+
+    @Mock
+    MusicConnector musicConnector;
     @Mock
     AuthService authService;
 
@@ -40,8 +46,10 @@ class PlaylistServiceTest {
                     new Song("3", "Song 3", "Artist 3", "Album 3", "Picture 3", 136, null, 180)
             );
 
-            when(authService.getAccessToken()).thenReturn("mockedAccessToken");
-            when(spotifyService.getSongs(anyString(), anyInt())).thenReturn(songs).thenReturn(List.of());
+            when(authService.getAccessToken()).thenReturn(Optional.of("mockedAccessToken"));
+            when(authService.getAuthenticatorProvider()).thenReturn(Optional.of("spotify"));
+            when(musicConnectorFactory.getMusicConnector("spotify")).thenReturn(musicConnector);
+            when(musicConnector.getUserTracks(anyString(), anyInt())).thenReturn(songs).thenReturn(List.of());
 
             PlaylistResponse playlistResponse = playlistService.getPlaylistProposal(paceInMinPerKm, distance, height);
 
@@ -58,8 +66,10 @@ class PlaylistServiceTest {
             float distance = 10.0f;
             float height = 175.0f;
 
-            when(authService.getAccessToken()).thenReturn("mockedAccessToken");
-            when(spotifyService.getSongs(anyString(), anyInt())).thenReturn(List.of());
+            when(authService.getAccessToken()).thenReturn(Optional.of("mockedAccessToken"));
+            when(authService.getAuthenticatorProvider()).thenReturn(Optional.of("spotify"));
+            when(musicConnectorFactory.getMusicConnector("spotify")).thenReturn(musicConnector);
+            when(musicConnector.getUserTracks(anyString(), anyInt())).thenReturn(List.of());
 
             RuntimeException exception = assertThrows(RuntimeException.class, () -> {
                 playlistService.getPlaylistProposal(paceInMinPerKm, distance, height);
@@ -81,8 +91,10 @@ class PlaylistServiceTest {
                     new Song("4", "Song 4", "Artist 4", "Album 4", "Picture 4", 140, null, 3000)
             );
 
-            when(authService.getAccessToken()).thenReturn("mockedAccessToken");
-            when(spotifyService.getSongs(anyString(), anyInt())).thenReturn(songs).thenReturn(List.of());
+            when(authService.getAccessToken()).thenReturn(Optional.of("mockedAccessToken"));
+            when(authService.getAuthenticatorProvider()).thenReturn(Optional.of("spotify"));
+            when(musicConnectorFactory.getMusicConnector("spotify")).thenReturn(musicConnector);
+            when(musicConnector.getUserTracks(anyString(), anyInt())).thenReturn(songs).thenReturn(List.of());
 
             PlaylistResponse playlistResponse = playlistService.getPlaylistProposal(paceInMinPerKm, distance, height);
 

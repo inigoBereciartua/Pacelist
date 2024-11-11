@@ -2,6 +2,8 @@ package com.ibereciartua.app.service;
 
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class ProfileService {
 
@@ -12,6 +14,10 @@ public class ProfileService {
     }
 
     public String getProfile() {
-        return authService.getName();
+        Optional<String> name = authService.getName();
+        if (name.isEmpty()) {
+            throw new RuntimeException("No name found");
+        }
+        return name.get();
     }
 }

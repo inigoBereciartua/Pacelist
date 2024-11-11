@@ -1,4 +1,4 @@
-package com.ibereciartua.domain.exceptions;
+package com.ibereciartua.connector.exceptions;
 
 public class MusicConnectorException extends RuntimeException {
     public MusicConnectorException(String message) {
