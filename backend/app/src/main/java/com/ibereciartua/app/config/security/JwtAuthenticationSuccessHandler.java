@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.OAuth2RefreshToken;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -29,7 +30,9 @@ public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        OAuth2AuthorizedClient authorizedClient = authorizedClientService.loadAuthorizedClient("spotify", authentication.getName());
+        OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
+        String authenticationProvider = oauthToken.getAuthorizedClientRegistrationId();
+        OAuth2AuthorizedClient authorizedClient = authorizedClientService.loadAuthorizedClient(authenticationProvider, authentication.getName());
         if (authorizedClient != null) {
             OAuth2AccessToken accessToken = authorizedClient.getAccessToken();
             OAuth2RefreshToken refreshToken = authorizedClient.getRefreshToken();
@@ -40,10 +43,13 @@ public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHan
             claims.put("roles", grantedAuthorities);
             claims.put("accessToken", accessToken.getTokenValue());
             claims.put("refreshToken", refreshToken != null ? refreshToken.getTokenValue() : null);
+            claims.put("authenticationProvider", authenticationProvider);
 
             String jwt = jwtUtil.generateToken(claims, authentication.getName());
             String redirectUrl = successRedirectUrl + "?token=" + jwt;
             response.sendRedirect(redirectUrl);
+        } else {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid authorization token");
         }
     }
 }
