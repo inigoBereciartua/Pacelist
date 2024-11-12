@@ -5,7 +5,7 @@ import com.ibereciartua.app.domain.exception.SongSearchException;
 import com.ibereciartua.app.domain.exception.UserCredentialsNotFoundException;
 import com.ibereciartua.app.factory.MusicConnectorFactory;
 import com.ibereciartua.commons.domain.Playlist;
-import com.ibereciartua.app.domain.PlaylistResponse;
+import com.ibereciartua.app.domain.PlaylistProposalResponse;
 import com.ibereciartua.commons.domain.Song;
 import com.ibereciartua.connector.MusicConnector;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ public class PlaylistService {
         this.musicConnectorFactory = musicConnectorFactory;
     }
 
-    public PlaylistResponse getPlaylistProposal(float paceInMinPerKm, float distance, float height) {
+    public PlaylistProposalResponse getPlaylistProposal(float paceInMinPerKm, float distance, float height) {
         if (paceInMinPerKm <= 0 || distance <= 0 || height <= 0) {
             throw new IllegalArgumentException("Invalid parameters");
         }
@@ -68,13 +68,8 @@ public class PlaylistService {
         }
 
         String name = "Running Session - %skm - %smin/km - %s BPM".formatted(distance, paceInMinPerKm, bpm);
-        PlaylistResponse response = new PlaylistResponse();
-        response.setName(name);
-        response.setBpm(bpm);
-        response.setNeededDurationInSeconds((int) durationInSeconds);
-        response.setSongs(songs);
 
-        return response;
+        return new PlaylistProposalResponse(name, bpm, neededDurationInSeconds, songs);
     }
 
     public static int calculateBPM(double paceInMinPerKm, double height) {
@@ -92,7 +87,7 @@ public class PlaylistService {
         if (authenticatorProvider.isEmpty()) {
             throw new UserCredentialsNotFoundException("No authenticator provider found");
         }
-        Playlist playlist = new Playlist(request.getName(), request.getSongIds());
+        Playlist playlist = new Playlist(request.name(), request.songIds());
         MusicConnector musicConnector = musicConnectorFactory.getMusicConnector(authenticatorProvider.get());
         Optional<String> accessToken = authService.getAccessToken();
         if (accessToken.isEmpty()) {

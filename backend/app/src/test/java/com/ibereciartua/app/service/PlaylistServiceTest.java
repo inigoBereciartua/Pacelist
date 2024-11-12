@@ -1,6 +1,6 @@
 package com.ibereciartua.app.service;
 
-import com.ibereciartua.app.domain.PlaylistResponse;
+import com.ibereciartua.app.domain.PlaylistProposalResponse;
 import com.ibereciartua.app.factory.MusicConnectorFactory;
 import com.ibereciartua.commons.domain.Song;
 import com.ibereciartua.connector.MusicConnector;
@@ -51,13 +51,13 @@ class PlaylistServiceTest {
             when(musicConnectorFactory.getMusicConnector("spotify")).thenReturn(musicConnector);
             when(musicConnector.getUserTracks(anyString(), anyInt())).thenReturn(songs).thenReturn(List.of());
 
-            PlaylistResponse playlistResponse = playlistService.getPlaylistProposal(paceInMinPerKm, distance, height);
+            PlaylistProposalResponse playlistProposalResponse = playlistService.getPlaylistProposal(paceInMinPerKm, distance, height);
 
-            assertNotNull(playlistResponse);
-            assertEquals (playlistResponse.getName(), "Running Session - 10.0km - 5.0min/km - 138 BPM");
-            assertEquals(138, playlistResponse.getBpm());
-            assertEquals(3000, playlistResponse.getNeededDurationInSeconds());
-            assertEquals(3, playlistResponse.getSongs().size());
+            assertNotNull(playlistProposalResponse);
+            assertEquals (playlistProposalResponse.getName(), "Running Session - 10.0km - 5.0min/km - 138 BPM");
+            assertEquals(138, playlistProposalResponse.getBpm());
+            assertEquals(3000, playlistProposalResponse.getNeededDurationInSeconds());
+            assertEquals(3, playlistProposalResponse.getSongs().size());
         }
 
         @Test
@@ -96,11 +96,11 @@ class PlaylistServiceTest {
             when(musicConnectorFactory.getMusicConnector("spotify")).thenReturn(musicConnector);
             when(musicConnector.getUserTracks(anyString(), anyInt())).thenReturn(songs).thenReturn(List.of());
 
-            PlaylistResponse playlistResponse = playlistService.getPlaylistProposal(paceInMinPerKm, distance, height);
+            PlaylistProposalResponse playlistProposalResponse = playlistService.getPlaylistProposal(paceInMinPerKm, distance, height);
 
-            assertNotNull(playlistResponse);
-            assertEquals(3000, playlistResponse.getNeededDurationInSeconds());
-            assertEquals(3, playlistResponse.getSongs().size());
+            assertNotNull(playlistProposalResponse);
+            assertEquals(3000, playlistProposalResponse.getNeededDurationInSeconds());
+            assertEquals(3, playlistProposalResponse.getSongs().size());
         }
 
         @Test

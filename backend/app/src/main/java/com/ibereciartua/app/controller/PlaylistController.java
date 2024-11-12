@@ -1,7 +1,7 @@
 package com.ibereciartua.app.controller;
 
 import com.ibereciartua.app.domain.NewPlaylistRequest;
-import com.ibereciartua.app.domain.PlaylistResponse;
+import com.ibereciartua.app.domain.PlaylistProposalResponse;
 import com.ibereciartua.app.service.PlaylistService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -18,9 +18,9 @@ public class PlaylistController {
     }
 
     @GetMapping
-    public ResponseEntity<PlaylistResponse> getPlaylist(@RequestParam("pace") @NonNull Float pace,
-                                                        @RequestParam("distance") @NonNull Float distance,
-                                                        @RequestParam("height") @NonNull Float height) {
+    public ResponseEntity<PlaylistProposalResponse> getPlaylist(@RequestParam("pace") @NonNull Float pace,
+                                                                @RequestParam("distance") @NonNull Float distance,
+                                                                @RequestParam("height") @NonNull Float height) {
         return ResponseEntity.ok(playlistService.getPlaylistProposal(pace, distance, height));
     }
 
