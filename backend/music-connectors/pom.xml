@@ -21,7 +21,7 @@
     <dependencies>
         <dependency>
             <groupId>com.ibereciartua</groupId>
-            <artifactId>commons</artifactId>
+            <artifactId>domain</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 

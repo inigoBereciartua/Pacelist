@@ -34,6 +34,7 @@ Follow the steps below to set up the project locally:
     ```bash
     export SPOTIFY_CLIENT_ID=your_client_id
     export SPOTIFY_CLIENT_SECRET=your_client_secret
+    export JWT_SECRET_KEY=your_jwt_secret_key
     ```
 - Install the dependencies:
     ```bash
