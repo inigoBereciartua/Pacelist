@@ -1,5 +1,7 @@
 package com.ibereciartua.app.config.exception;
 
+import com.ibereciartua.app.domain.exception.SongSearchException;
+import com.ibereciartua.app.domain.exception.UserCredentialsNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
@@ -43,7 +45,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = { BadRequestErrorException.class })
     protected ResponseEntity<Object> handleBadRequest(final RuntimeException e, final WebRequest request) {
-        logger.warn("Bad Request: " + e.getMessage());
+        logger.warn("Bad Request: ", e);
         return handleExceptionInternal(e, new ApiError(e), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
@@ -53,16 +55,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(e, new ApiError(e), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
-    @ExceptionHandler(value = { InternalServerErrorException.class })
+    @ExceptionHandler(value = { InternalServerErrorException.class, RuntimeException.class })
     protected ResponseEntity<Object> handleInternalServerError(final RuntimeException e, final WebRequest request) {
         logger.error("Internal Server Error", e);
         return handleExceptionInternal(e, new ApiError(e), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 
-    @ExceptionHandler(value = { RuntimeException.class })
-    protected ResponseEntity<Object> handleRuntimeException(final RuntimeException e, final WebRequest request) {
-        logger.error("Internal Server Error", e);
-        return handleExceptionInternal(e, new ApiError(e), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+    @ExceptionHandler(UserCredentialsNotFoundException.class)
+    public ResponseEntity<String> handleUserNameNotFoundException(UserCredentialsNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(SongSearchException.class)
+    public ResponseEntity<String> handleSongSearchException(SongSearchException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
 }
