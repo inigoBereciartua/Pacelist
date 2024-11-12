@@ -2,6 +2,7 @@ package com.ibereciartua.app.service;
 
 import com.ibereciartua.app.domain.NewPlaylistRequest;
 import com.ibereciartua.app.domain.exception.SongSearchException;
+import com.ibereciartua.app.domain.exception.UserCredentialsNotFoundException;
 import com.ibereciartua.app.factory.MusicConnectorFactory;
 import com.ibereciartua.commons.domain.Playlist;
 import com.ibereciartua.app.domain.PlaylistResponse;
@@ -39,11 +40,11 @@ public class PlaylistService {
         List<Song> songs = new ArrayList<>();
         Optional<String> token = authService.getAccessToken();
         if (token.isEmpty()) {
-            throw new RuntimeException("No access token found");
+            throw new UserCredentialsNotFoundException("No access token found");
         }
         Optional<String> authenticatorProvider = authService.getAuthenticatorProvider();
         if (authenticatorProvider.isEmpty()) {
-            throw new RuntimeException("No authenticator provider found");
+            throw new UserCredentialsNotFoundException("No authenticator provider found");
         }
         MusicConnector musicConnector = musicConnectorFactory.getMusicConnector(authenticatorProvider.get());
 
@@ -89,17 +90,17 @@ public class PlaylistService {
     public void createPlaylist(NewPlaylistRequest request) {
         Optional<String> authenticatorProvider = authService.getAuthenticatorProvider();
         if (authenticatorProvider.isEmpty()) {
-            throw new RuntimeException("No authenticator provider found");
+            throw new UserCredentialsNotFoundException("No authenticator provider found");
         }
         Playlist playlist = new Playlist(request.getName(), request.getSongIds());
         MusicConnector musicConnector = musicConnectorFactory.getMusicConnector(authenticatorProvider.get());
         Optional<String> accessToken = authService.getAccessToken();
         if (accessToken.isEmpty()) {
-            throw new RuntimeException("No access token found");
+            throw new UserCredentialsNotFoundException("No access token found");
         }
         Optional<String> name = authService.getName();
         if (name.isEmpty()) {
-            throw new RuntimeException("No user name found");
+            throw new UserCredentialsNotFoundException("No user name found");
         }
         musicConnector.createPlaylist(accessToken.get(), name.get(), playlist);
     }

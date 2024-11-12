@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>music-connectors</artifactId>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>com.ibereciartua</groupId>
             <artifactId>domain</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${parent.version}</version>
         </dependency>
 
         <dependency>

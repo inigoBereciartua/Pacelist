@@ -2,9 +2,7 @@ package com.ibereciartua.app.controller;
 
 import com.ibereciartua.app.domain.NewPlaylistRequest;
 import com.ibereciartua.app.domain.PlaylistResponse;
-import com.ibereciartua.app.domain.exception.SongSearchException;
 import com.ibereciartua.app.service.PlaylistService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
@@ -30,10 +28,5 @@ public class PlaylistController {
     public ResponseEntity<Void> createPlaylist(@RequestBody NewPlaylistRequest request) {
         playlistService.createPlaylist(request);
         return ResponseEntity.ok().build();
-    }
-
-    @ExceptionHandler(SongSearchException.class)
-    public ResponseEntity<String> handleSongSearchException(SongSearchException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 }
