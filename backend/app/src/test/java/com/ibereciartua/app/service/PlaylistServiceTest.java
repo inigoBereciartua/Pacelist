@@ -54,10 +54,10 @@ class PlaylistServiceTest {
             PlaylistProposalResponse playlistProposalResponse = playlistService.getPlaylistProposal(paceInMinPerKm, distance, height);
 
             assertNotNull(playlistProposalResponse);
-            assertEquals (playlistProposalResponse.getName(), "Running Session - 10.0km - 5.0min/km - 138 BPM");
-            assertEquals(138, playlistProposalResponse.getBpm());
-            assertEquals(3000, playlistProposalResponse.getNeededDurationInSeconds());
-            assertEquals(3, playlistProposalResponse.getSongs().size());
+            assertEquals (playlistProposalResponse.name(), "Running Session - 10.0km - 5.0min/km - 138 BPM");
+            assertEquals(138, playlistProposalResponse.bpm());
+            assertEquals(3000, playlistProposalResponse.neededDurationInSeconds());
+            assertEquals(3, playlistProposalResponse.songs().size());
         }
 
         @Test
@@ -99,8 +99,8 @@ class PlaylistServiceTest {
             PlaylistProposalResponse playlistProposalResponse = playlistService.getPlaylistProposal(paceInMinPerKm, distance, height);
 
             assertNotNull(playlistProposalResponse);
-            assertEquals(3000, playlistProposalResponse.getNeededDurationInSeconds());
-            assertEquals(3, playlistProposalResponse.getSongs().size());
+            assertEquals(3000, playlistProposalResponse.neededDurationInSeconds());
+            assertEquals(3, playlistProposalResponse.songs().size());
         }
 
         @Test

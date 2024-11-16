@@ -39,7 +39,7 @@ export default {
     name: 'SpotifyLogin',
     methods: {
         loginWithSpotify() {
-            window.location.href = `${API_URL}/auth/login?redirectUri=` + window.location.origin + '/playlist-info-form';
+            window.location.href = `${API_URL}/auth/login`;
         }
     },
     mounted() {

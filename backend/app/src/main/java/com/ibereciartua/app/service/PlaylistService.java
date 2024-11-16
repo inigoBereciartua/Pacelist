@@ -69,7 +69,7 @@ public class PlaylistService {
 
         String name = "Running Session - %skm - %smin/km - %s BPM".formatted(distance, paceInMinPerKm, bpm);
 
-        return new PlaylistProposalResponse(name, bpm, neededDurationInSeconds, songs);
+        return new PlaylistProposalResponse(name, bpm, (int) durationInSeconds, songs);
     }
 
     public static int calculateBPM(double paceInMinPerKm, double height) {
