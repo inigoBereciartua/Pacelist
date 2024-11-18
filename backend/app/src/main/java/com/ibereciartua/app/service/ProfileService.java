@@ -5,6 +5,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * The ProfileService class is responsible for handling the profile requests.
+ * This service is responsible for handling the profile requests and returning the profile information.
+ */
 @Service
 public class ProfileService {
 
@@ -14,6 +18,10 @@ public class ProfileService {
         this.authService = authService;
     }
 
+    /**
+     * Get the profile information.
+     * @return The profile information.
+     */
     public String getProfile() {
         Optional<String> name = authService.getName();
         if (name.isEmpty()) {

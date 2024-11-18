@@ -7,11 +7,19 @@ import org.springframework.security.authentication.event.AuthenticationSuccessEv
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
+/**
+ * Listener for handling successful authentication events.
+ * This listener is responsible for logging the successful authentication events.
+ */
 @Component
 public class AuthenticationSuccessListener implements ApplicationListener<AuthenticationSuccessEvent> {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationSuccessListener.class);
 
+    /**
+     * Handles the successful authentication event.
+     * @param event the authentication success event
+     */
     @Override
     public void onApplicationEvent(AuthenticationSuccessEvent event) {
         Object principal = event.getAuthentication().getPrincipal();

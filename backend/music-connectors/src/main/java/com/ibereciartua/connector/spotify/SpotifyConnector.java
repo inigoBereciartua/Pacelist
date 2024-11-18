@@ -23,6 +23,13 @@ import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+/**
+ * Connector for Spotify.
+ * This class is responsible for interacting with the Spotify API and fetching the user's tracks.
+ * It also allows creating a new playlist on Spotify with the selected tracks.
+ * @see MusicConnector MusicConnector
+ * @see <a href="https://developer.spotify.com/documentation/web-api/">Spotify API documentation</a>
+ */
 public class SpotifyConnector implements MusicConnector {
 
     private final HttpClient httpClient = HttpClient.newHttpClient();
@@ -33,6 +40,15 @@ public class SpotifyConnector implements MusicConnector {
 
     private static final int PAGE_SIZE = 50;
 
+    /**
+     * Fetch the user's tracks from Spotify.
+     * @param accessToken The user's access token.
+     * @param offset The offset for the tracks.
+     * @return The user's tracks.
+     * @throws MusicConnectorException If an error occurs while fetching the user's tracks.
+     * @see Song Song
+     * @see <a href="https://developer.spotify.com/documentation/web-api/reference/tracks/get-several-audio-features/">Spotify API documentation</a>
+     */
     public List<Song> getUserTracks(String accessToken, int offset) throws MusicConnectorException {
         try {
             List<JsonNode> allTracks = fetchTracks(accessToken, offset);
@@ -49,6 +65,16 @@ public class SpotifyConnector implements MusicConnector {
         }
     }
 
+    /**
+     * Fetch the user's tracks from Spotify.
+     * @param accessToken The user's access token.
+     * @param offset The offset for the tracks.
+     * @return The user's tracks.
+     * @throws IOException If an error occurs while fetching the user's tracks.
+     * @throws InterruptedException If an error occurs while fetching the user's tracks.
+     * @throws URISyntaxException If an error occurs while fetching the user's tracks.
+     * @see <a href="https://developer.spotify.com/documentation/web-api/reference/library/get-users-saved-tracks/">Spotify API documentation</a>
+     */
     private List<JsonNode> fetchTracks(String accessToken, int offset) throws IOException, InterruptedException, URISyntaxException {
         List<JsonNode> allTracks = new ArrayList<>();
 
@@ -77,6 +103,16 @@ public class SpotifyConnector implements MusicConnector {
         return allTracks;
     }
 
+    /**
+     * Fetch the audio features for the user's tracks.
+     * @param accessToken  The user's access token.
+     * @param allTracks The user's tracks.
+     * @return The audio features for the user's tracks.
+     * @throws IOException If an error occurs while fetching the audio features.
+     * @throws InterruptedException If an error occurs while fetching the audio features.
+     * @throws URISyntaxException If an error occurs while fetching the audio features.
+     * @see <a href="https://developer.spotify.com/documentation/web-api/reference/tracks/get-several-audio-features/">Spotify API documentation</a>
+     */
     private List<JsonNode> fetchAudioFeatures(String accessToken, List<JsonNode> allTracks) throws IOException, InterruptedException, URISyntaxException {
         List<String> trackIds = allTracks.stream()
                 .map(track -> track.path("track").path("id").asText())
@@ -105,6 +141,12 @@ public class SpotifyConnector implements MusicConnector {
         return audioFeatures;
     }
 
+    /**
+     * Map the user's tracks and audio features to Song objects.
+     * @param allTracks The user's tracks.
+     * @param audioFeatures The audio features for the user's tracks.
+     * @return The user's tracks as Song objects.
+     */
     private List<Song> mapToSongs(List<JsonNode> allTracks, List<JsonNode> audioFeatures) {
         List<Song> songs = new ArrayList<>();
         for (JsonNode audioFeature : audioFeatures) {
@@ -136,6 +178,15 @@ public class SpotifyConnector implements MusicConnector {
         return songs;
     }
 
+    /**
+     * Create a new playlist on Spotify.
+     * @param accessToken The user's access token.
+     * @param userId The user's ID.
+     * @param newPlaylist The new playlist to create.
+     * @throws PlaylistCreationException If an error occurs while creating the playlist.
+     * @see Playlist Playlist
+     * @see <a href="https://developer.spotify.com/documentation/web-api/reference/playlists/create-playlist/">Spotify API documentation</a>
+     */
     public void createPlaylist(final String accessToken, final String userId, final Playlist newPlaylist) throws PlaylistCreationException {
         try {
             SpotifyPlaylist playlist = SpotifyPlaylist.from(newPlaylist);
@@ -157,6 +208,17 @@ public class SpotifyConnector implements MusicConnector {
         }
     }
 
+    /**
+     * Build the request to create a new playlist on Spotify.
+     * @param accessToken The user's access token.
+     * @param userId The user's ID.
+     * @param playlist The new playlist to create.
+     * @return The request to create a new playlist on Spotify.
+     * @throws URISyntaxException If an error occurs while building the request.
+     * @throws IOException If an error occurs while building the request.
+     * @see Playlist Playlist
+     * @see <a href="https://developer.spotify.com/documentation/web-api/reference/playlists/create-playlist/">Spotify API documentation</a>
+     */
     private HttpRequest buildCreatePlaylistRequest(String accessToken, String userId, SpotifyPlaylist playlist) throws URISyntaxException, IOException {
         return HttpRequest.newBuilder()
                 .uri(new URI("https://api.spotify.com/v1/users/" + userId + "/playlists"))
@@ -166,6 +228,11 @@ public class SpotifyConnector implements MusicConnector {
                 .build();
     }
 
+    /**
+     * Check the response from creating a new playlist on Spotify.
+     * @param response The response from creating a new playlist on Spotify.
+     * @throws PlaylistCreationException If the response indicates an error.
+     */
     private void checkCreatePlaylistResponse(HttpResponse<String> response) throws PlaylistCreationException {
         if (response.statusCode() != 201) {
             logger.warning("Failed to create playlist. Status code: " + response.statusCode());
@@ -173,6 +240,14 @@ public class SpotifyConnector implements MusicConnector {
         }
     }
 
+    /**
+     * Add tracks to a playlist on Spotify.
+     * @param accessToken The user's access token.
+     * @param playlistId The ID of the playlist to add tracks to.
+     * @param songIds The IDs of the songs to add to the playlist.
+     * @throws Exception If an error occurs while adding tracks to the playlist.
+     * @see <a href="https://developer.spotify.com/documentation/web-api/reference/playlists/add-tracks-to-playlist/">Spotify API documentation</a>
+     */
     private void addTracksToPlaylist(String accessToken, String playlistId, List<String> songIds) throws Exception {
         List<String> trackUris = songIds.stream().map(id -> "spotify:track:" + id).toList();
         String uriJson = objectMapper.writeValueAsString(new SpotifyTrackUris(trackUris));

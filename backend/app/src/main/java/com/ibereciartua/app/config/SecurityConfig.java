@@ -22,6 +22,12 @@ import java.util.Collections;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+/**
+ * Security configuration for the application.
+ * This class configures the security settings for the application.
+ * It defines the security filter chain and the authentication success handler.
+ * It also configures the CORS policy for the application.
+ */
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
@@ -43,6 +49,16 @@ public class SecurityConfig {
         return new JwtAuthenticationSuccessHandler(jwtUtil, authorizedClientService, variableUtils.getLoginRedirectUrl());
     }
 
+    /**
+     * Configures the security filter chain for the application.
+     * @param http the HttpSecurity object to configure the security filter chain
+     * @return the SecurityFilterChain object
+     * @throws Exception if an error occurs while configuring the security filter chain
+     * @see SecurityFilterChain
+     * @see HttpSecurity
+     * @see JwtAuthenticationFilter
+     * @see JwtAuthenticationSuccessHandler
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -63,6 +79,12 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Configures the CORS policy for the application.
+     * This method defines the allowed origins, headers, and methods for the application.
+     * @return the CorsConfigurationSource object
+     * @see CorsConfiguration
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();

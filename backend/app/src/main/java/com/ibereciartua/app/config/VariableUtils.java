@@ -5,6 +5,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * Utility class for retrieving application variables.
+ * This class is responsible for retrieving the application variables from the application properties file.
+ */
 @Component
 public class VariableUtils {
 

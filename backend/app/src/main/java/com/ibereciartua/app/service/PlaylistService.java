@@ -27,6 +27,17 @@ public class PlaylistService {
         this.musicConnectorFactory = musicConnectorFactory;
     }
 
+    /**
+     * Get a playlist proposal based on the user's running pace, distance and height.
+     * @param paceInMinPerKm The user's running pace in min/km.
+     *                       Must be a positive number.
+     * @param distance The user's running distance in km.
+     *                 Must be a positive number.
+     * @param height The user's height in cm.
+     *               Must be a positive number.
+     * @return The playlist proposal.
+     * @throws IllegalArgumentException If any of the parameters is not a positive number.
+     */
     public PlaylistProposalResponse getPlaylistProposal(float paceInMinPerKm, float distance, float height) {
         if (paceInMinPerKm <= 0 || distance <= 0 || height <= 0) {
             throw new IllegalArgumentException("Invalid parameters");
@@ -72,6 +83,12 @@ public class PlaylistService {
         return new PlaylistProposalResponse(name, bpm, (int) durationInSeconds, songs);
     }
 
+    /**
+     * Calculate the BPM based on the user's running pace and height.
+     * @param paceInMinPerKm The user's running pace in min/km.
+     * @param height The user's height in cm.
+     * @return The calculated BPM.
+     */
     public static int calculateBPM(double paceInMinPerKm, double height) {
         if (paceInMinPerKm <= 0 || height <= 0) {
             throw new IllegalArgumentException("Invalid parameters");
@@ -82,6 +99,10 @@ public class PlaylistService {
         return (int) Math.round(cadence / 2);
     }
 
+    /**
+     * Create a new playlist based on the user's preferences.
+     * @param request The request containing the playlist preferences.
+     */
     public void createPlaylist(NewPlaylistRequest request) {
         Optional<String> authenticatorProvider = authService.getAuthenticatorProvider();
         if (authenticatorProvider.isEmpty()) {

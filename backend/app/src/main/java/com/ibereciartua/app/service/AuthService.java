@@ -7,6 +7,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * The AuthService class is responsible for handling the authentication requests.
+ * This service is responsible for handling the authentication requests and returning the authentication information.
+ * The authentication information includes the access token, the name and the authenticator provider.
+ */
 @Service
 public class AuthService {
 

@@ -22,6 +22,10 @@ import java.util.Map;
 /**
  * Global exception handler for the application.
  * This class handles all exceptions thrown by the application and returns a proper response.
+ * @see ControllerAdvice
+ * @see ResponseEntityExceptionHandler
+ * @see ErrorAttributes
+ * @see DefaultErrorAttributes
  */
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {

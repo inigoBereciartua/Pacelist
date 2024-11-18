@@ -19,12 +19,25 @@ import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+/**
+ * The SoundCloudConnector class is responsible for handling the SoundCloud API requests.
+ * @see MusicConnector
+ * @see <a href="https://developers.soundcloud.com/docs/api/reference">SoundCloud API Reference</a>
+ *
+ */
 public class SoundCloudConnector implements MusicConnector {
 
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final Logger logger = Logger.getLogger(SoundCloudConnector.class.getName());
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    /**
+     * Get the user tracks.
+     * @param accessToken the access token
+     * @param offset the offset
+     * @return The user tracks
+     * @throws MusicConnectorException if an error occurs while fetching the user tracks
+     */
     public List<Song> getUserTracks(String accessToken, int offset) throws MusicConnectorException {
         try {
             SoundCloudTrackResponse likedTracksResponse = fetchLikedTracks(accessToken, offset);
@@ -35,6 +48,17 @@ public class SoundCloudConnector implements MusicConnector {
         }
     }
 
+    /**
+     * Fetch the liked tracks.
+     * @param accessToken the access token
+     * @param offset the offset
+     * @return The liked tracks
+     * @throws IOException if an error occurs while fetching the liked tracks
+     * @throws InterruptedException if an error occurs while fetching the liked tracks
+     * @throws URISyntaxException if an error occurs while fetching the liked tracks
+     * @see SoundCloudTrackResponse
+     * @see <a href="https://developers.soundcloud.com/docs/api/reference">SoundCloud API Reference</a>
+     */
     private SoundCloudTrackResponse fetchLikedTracks(String accessToken, int offset) throws IOException, InterruptedException, URISyntaxException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new URI("https://api.soundcloud.com/me/likes/tracks?limit=50&offset=" + offset))
@@ -51,6 +75,11 @@ public class SoundCloudConnector implements MusicConnector {
         return objectMapper.readValue(response.body(), SoundCloudTrackResponse.class);
     }
 
+    /**
+     * Map the SoundCloud tracks to the Song domain.
+     * @param tracks the SoundCloud tracks
+     * @return The songs
+     */
     private List<Song> mapToSongs(List<SoundCloudTrackResponse.Track> tracks) {
         return tracks.stream().map(track -> {
             String trackId = track.id();
@@ -64,6 +93,16 @@ public class SoundCloudConnector implements MusicConnector {
         }).collect(Collectors.toList());
     }
 
+    /**
+     * Create a new playlist on SoundCloud.
+     * @param accessToken the access token
+     * @param userId the user ID
+     * @param newPlaylist the new playlist
+     * @throws PlaylistCreationException if an error occurs while creating the playlist
+     * @see Playlist
+     * @see SoundCloudPlaylist
+     * @see <a href="https://developers.soundcloud.com/docs/api/reference">SoundCloud API Reference</a>
+     */
     public void createPlaylist(final String accessToken, final String userId, final Playlist newPlaylist) throws PlaylistCreationException {
         try {
             SoundCloudPlaylist playlist = SoundCloudPlaylist.from(newPlaylist);
@@ -84,6 +123,16 @@ public class SoundCloudConnector implements MusicConnector {
         }
     }
 
+    /**
+     * Build the create playlist request.
+     * @param accessToken the access token
+     * @param playlist the playlist
+     * @return The create playlist request
+     * @throws URISyntaxException if an error occurs while building the create playlist request
+     * @throws IOException if an error occurs while building the create playlist request
+     * @see SoundCloudPlaylist
+     * @see <a href="https://developers.soundcloud.com/docs/api/reference">SoundCloud API Reference</a>
+     */
     private HttpRequest buildCreatePlaylistRequest(String accessToken, SoundCloudPlaylist playlist) throws URISyntaxException, IOException {
         return HttpRequest.newBuilder()
                 .uri(new URI("https://api.soundcloud.com/playlists"))
@@ -93,6 +142,11 @@ public class SoundCloudConnector implements MusicConnector {
                 .build();
     }
 
+    /**
+     * Check the creation of playlist's response.
+     * @param response the response
+     * @throws PlaylistCreationException if an error occurs while checking the creation of playlist's response
+     */
     private void checkCreatePlaylistResponse(HttpResponse<String> response) throws PlaylistCreationException {
         if (response.statusCode() != 201) {
             logger.warning("Failed to create playlist. Status code: " + response.statusCode());
