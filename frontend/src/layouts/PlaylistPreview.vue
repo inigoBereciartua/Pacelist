@@ -2,11 +2,6 @@
     <div>
         <div class="header">
             <back-arrow/>
-            <div class="spotify-attribution">
-                <a href="https://www.spotify.com/" target="_blank" class="contact-link">
-                    <img src="@/assets/spotify-icon.png" alt="Spotify Icon" class="spotify-icon" /> Data provided by Spotify
-                </a>
-            </div>
         </div>
         <div v-if="playlist" class="recent-tracks">
             <h2>{{ playlist.name }}</h2>
@@ -30,11 +25,14 @@
                         <div class="checkmark-overlay" v-if="selectedSongsIds.includes(track.id)">
                             ✓
                         </div>
-                        <img :src="track.picture" alt="Album Cover" class="album-cover" />
-                        <p class="track-name" :class="{ 'selected-text': selectedSongsIds.includes(track.id) }">
-                            <strong>{{ track.title }}</strong>
-                        </p>
-                        <p class="artist-name" :class="{ 'selected-text': selectedSongsIds.includes(track.id) }">by {{ track.artist }}</p>
+                        <div class="track-info">
+                            <img src="@/assets/Spotify_Full_Logo_White_RGB.svg" alt="Spotify Icon" class="spotify-full-logo" />
+                            <img :src="track.picture" alt="Album Cover" class="album-cover" />
+                            <p class="track-name" :class="{ 'selected-text': selectedSongsIds.includes(track.id) }">
+                                <strong>{{ track.title }}</strong>
+                            </p>
+                            <p class="artist-name" :class="{ 'selected-text': selectedSongsIds.includes(track.id) }">by {{ track.artist }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -48,6 +46,7 @@ import { useToast } from "vue-toastification";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import playlistApi from '@/api/playlist';
 import BackArrow from "@/components/BackArrow.vue";
+
 
 export default {
     name: 'PlaylistPreview',
@@ -171,26 +170,15 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 20px;
     width: 100%;
     background-color: #121212;
     z-index: 10;
     box-sizing: border-box;
 }
 
-.spotify-attribution {
-    font-size: 12px;
-    color: #1db954;
-    font-weight: bold;
-    white-space: nowrap;
-    margin-right: 10px;
-}
-
-.spotify-icon {
-    width: 16px;
-    height: 16px;
-    margin-right: 5px;
-    filter: brightness(0) saturate(100%) invert(44%) sepia(55%) saturate(262%) hue-rotate(89deg) brightness(95%) contrast(91%);
+.spotify-full-logo {
+    width: 80px;
+    height: 35px;
 }
 
 .playlist-data {
@@ -203,7 +191,7 @@ export default {
 .track-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 20px;
+    gap: 15px;
 }
 
 .track-item {
@@ -222,10 +210,21 @@ export default {
     background-color: #3b4b4a;
 }
 
+.track-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.track-info > :first-child {
+    margin-right: auto;
+}
+
 .album-cover {
     width: 100px;
     height: 100px;
     object-fit: cover;
+    margin-top: 10px;
     margin-bottom: 10px;
     border-radius: 8px;
 }
