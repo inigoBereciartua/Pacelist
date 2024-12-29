@@ -3,6 +3,7 @@ import SpotifyLogin from '../layouts/SpotifyLogin.vue';
 import PlaylistInfoForm from '@/layouts/PlaylistInfoForm.vue';
 import PlaylistPreview from '@/layouts/PlaylistPreview.vue';
 import TermsAndConditions from '@/layouts/TermsAndConditions.vue';
+import PrivacyPolicy from '@/layouts/PrivacyPolicy.vue';
 
 const routes = [
   {
@@ -29,6 +30,11 @@ const routes = [
     path: '/terms-and-conditions',
     name: 'TermsAndConditions',
     component: TermsAndConditions
+  },
+  {
+    path: '/privacy-policy',
+    name: 'PrivacyPolicy',
+    component: PrivacyPolicy
   },
   {
     path: '/:pathMatch(.*)*',

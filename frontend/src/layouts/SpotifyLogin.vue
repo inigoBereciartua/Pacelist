@@ -8,8 +8,7 @@
                 Log in with Spotify
             </button>
             <p class="login-info-text">
-                By logging in with Spotify, you agree to our
-                <router-link to="/terms-and-conditions" class="terms-link">Terms and Conditions</router-link>. This allows us to personalize playlists with songs you love!
+                By logging in with Spotify, you agree to our <router-link to="/terms-and-conditions" class="terms-link">Terms and Conditions</router-link> and <router-link to="/privacy-policy" class="terms-link">Privacy Policy</router-link>. This allows us to personalize playlists with songs you love!
             </p>
             <div class="contact-section">
                 <p>Have questions or feedback? Reach out:</p>
