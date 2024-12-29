@@ -165,10 +165,11 @@ public class SpotifyConnector implements MusicConnector {
                 String artist = matchingTrack.get("artists").get(0).get("name").asText();
                 String album = matchingTrack.get("album").get("name").asText();
                 String picture = matchingTrack.get("album").get("images").get(0).get("url").asText();
+                String songLink = matchingTrack.get("external_urls").get("spotify").asText();
                 LocalDateTime playedDate = LocalDateTime.parse(matchingTrackItem.get("added_at").asText(), playedAtFormatter.withZone(ZoneOffset.UTC));
                 int duration = matchingTrack.get("duration_ms").asInt() / 1000;
 
-                Song song = new Song(trackId, title, artist, album, picture, bpm, playedDate, duration);
+                Song song = new Song(trackId, title, artist, album, picture, songLink, bpm, playedDate, duration);
 
                 songs.add(song);
             } else {

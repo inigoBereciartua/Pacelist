@@ -28,9 +28,14 @@
                         <div class="track-info">
                             <img src="@/assets/Spotify_Full_Logo_White_RGB.svg" alt="Spotify Icon" class="spotify-full-logo" />
                             <img :src="track.picture" alt="Album Cover" class="album-cover" />
-                            <p class="track-name" :class="{ 'selected-text': selectedSongsIds.includes(track.id) }">
-                                <strong>{{ track.title }}</strong>
-                            </p>
+                            <span class='underline'>
+                                <!-- Using @Stop to prevent the default behavior of div toogling selection -->
+                                <a :href="track.link" target="_blank" rel="noopener noreferrer" @click.stop="">
+                                    <p class="track-name" :class="{ 'selected-text': selectedSongsIds.includes(track.id) }">
+                                        <strong>{{ track.title }}</strong>
+                                    </p>
+                                </a>
+                            </span>
                             <p class="artist-name" :class="{ 'selected-text': selectedSongsIds.includes(track.id) }">by {{ track.artist }}</p>
                         </div>
                     </div>
@@ -46,7 +51,6 @@ import { useToast } from "vue-toastification";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import playlistApi from '@/api/playlist';
 import BackArrow from "@/components/BackArrow.vue";
-
 
 export default {
     name: 'PlaylistPreview',
@@ -227,6 +231,16 @@ export default {
     margin-top: 10px;
     margin-bottom: 10px;
     border-radius: 8px;
+}
+
+span.underline {
+    color: white;
+    text-decoration: underline;
+}
+
+span.underline a {
+    color: white;
+    text-decoration: none;
 }
 
 .track-name {

@@ -8,6 +8,7 @@ public record Song(
         String artist,
         String album,
         String picture,
+        String link,
         int bpm,
         LocalDateTime playedDate,
         int duration

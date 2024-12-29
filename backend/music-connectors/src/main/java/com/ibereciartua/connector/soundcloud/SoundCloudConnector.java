@@ -89,7 +89,7 @@ public class SoundCloudConnector implements MusicConnector {
             int duration = track.duration() / 1000;
             int bpm = track.bpm() != null ? track.bpm() : -1;
 
-            return new Song(trackId, title, artist, "", picture, 0, LocalDateTime.now(), duration);
+            return new Song(trackId, title, artist, "", picture, "", 0, LocalDateTime.now(), duration);
         }).collect(Collectors.toList());
     }
 
