@@ -41,9 +41,9 @@ class PlaylistServiceTest {
             float height = 175.0f;
 
             List<Song> songs = List.of(
-                    new Song("1", "Song 1", "Artist 1", "Album 1", "Picture 1", 138, null, 180),
-                    new Song("2", "Song 2", "Artist 2", "Album 2", "Picture 2", 140, null, 180),
-                    new Song("3", "Song 3", "Artist 3", "Album 3", "Picture 3", 136, null, 180)
+                    new Song("1", "Song 1", "Artist 1", "Album 1", "Picture 1", "", 138, null, 180),
+                    new Song("2", "Song 2", "Artist 2", "Album 2", "Picture 2", "", 140, null, 180),
+                    new Song("3", "Song 3", "Artist 3", "Album 3", "Picture 3", "", 136, null, 180)
             );
 
             when(authService.getAccessToken()).thenReturn(Optional.of("mockedAccessToken"));
@@ -85,10 +85,10 @@ class PlaylistServiceTest {
             float height = 175.0f;
 
             List<Song> songs = List.of(
-                    new Song("1", "Song 1", "Artist 1", "Album 1", "Picture 1", 138, null, 2000),
-                    new Song("2", "Song 2", "Artist 2", "Album 2", "Picture 2", 140, null, 3000),
-                    new Song("3", "Song 3", "Artist 3", "Album 3", "Picture 3", 136, null, 3080),
-                    new Song("4", "Song 4", "Artist 4", "Album 4", "Picture 4", 140, null, 3000)
+                    new Song("1", "Song 1", "Artist 1", "Album 1", "Picture 1", "", 138, null, 2000),
+                    new Song("2", "Song 2", "Artist 2", "Album 2", "Picture 2", "", 140, null, 3000),
+                    new Song("3", "Song 3", "Artist 3", "Album 3", "Picture 3", "", 136, null, 3080),
+                    new Song("4", "Song 4", "Artist 4", "Album 4", "Picture 4", "", 140, null, 3000)
             );
 
             when(authService.getAccessToken()).thenReturn(Optional.of("mockedAccessToken"));
