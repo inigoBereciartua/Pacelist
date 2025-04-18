@@ -4,12 +4,12 @@ on:
   push:
     branches:
       - 'main'
-      - 'gh-actions-test'  # Added new trigger branch
+      - 'gh-actions-test'
 
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT }}
-  REGION: 'europe-west1'  # Unified region for both Artifact Registry and Cloud Run
-  SERVICE: 'my-service'  # Update to your service name
+  REGION: 'europe-west1'
+  SERVICE: 'pacelist-app-back'
   SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SA_KEY }}
   SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
   SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
@@ -75,7 +75,6 @@ jobs:
             JWT_SECRET_KEY='${{ env.JWT_SECRET_KEY }}'
             LOGIN_REDIRECT_URL='${{ env.LOGIN_REDIRECT_URL }}'
 
-      # Show Cloud Run URL (optional)
       - name: 'Show output'
         run: |
           echo ${{ steps.deploy.outputs.url }}
