@@ -4,11 +4,12 @@ on:
   push:
     branches:
       - 'main'
+      - 'dgh-actions-test'
 
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT }}
-  REGION: 'europe-west1'  # Unified region for both Artifact Registry and Cloud Run
-  SERVICE: 'my-service'  # Update to your service name
+  REGION: 'europe-west1'  # Ensure this matches both Cloud Run and Artifact Registry region
+  SERVICE: 'my-service'
   WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
   SERVICE_ACCOUNT_EMAIL: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
 
@@ -33,6 +34,10 @@ jobs:
         with:
           workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}'
 
+      # Debug: Check the token to ensure it's being passed correctly
+      - name: 'Debug Authentication Token'
+        run: echo "Auth Token: ${{ steps.auth.outputs.auth_token }}"
+
       # Docker login
       - name: 'Docker Auth'
         uses: 'docker/login-action@v3'
@@ -48,7 +53,7 @@ jobs:
           docker build --tag "${DOCKER_TAG}" ./backend
           docker push "${DOCKER_TAG}"
 
-      # Deploy the container to Cloud Run
+      # Deploy to Cloud Run
       - id: 'deploy'
         name: 'Deploy to Cloud Run'
         uses: 'google-github-actions/deploy-cloudrun@v2'
