@@ -69,11 +69,11 @@ jobs:
           image: '${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/my-service/${{ env.SERVICE }}:${{ github.sha }}'
           # Specify environment variables here
           env_vars: |
-            SPOTIFY_CLIENT_ID='${{ env.SPOTIFY_CLIENT_ID }}'
-            SPOTIFY_CLIENT_SECRET='${{ env.SPOTIFY_CLIENT_SECRET }}'
-            ALLOWED_ORIGINS='${{ env.ALLOWED_ORIGINS }}'
-            JWT_SECRET_KEY='${{ env.JWT_SECRET_KEY }}'
-            LOGIN_REDIRECT_URL='${{ env.LOGIN_REDIRECT_URL }}'
+            SPOTIFY_CLIENT_ID=${{ secrets.SPOTIFY_CLIENT_ID }}
+            SPOTIFY_CLIENT_SECRET=${{ secrets.SPOTIFY_CLIENT_SECRET }}
+            ALLOWED_ORIGINS=${{ secrets.ALLOWED_ORIGINS }}
+            JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
+            LOGIN_REDIRECT_URL=${{ secrets.LOGIN_REDIRECT_URL }}
 
       - name: 'Show output'
         run: |
