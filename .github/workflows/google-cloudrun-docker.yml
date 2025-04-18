@@ -68,7 +68,7 @@ jobs:
           region: '${{ env.REGION }}'
           image: '${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/my-service/${{ env.SERVICE }}:${{ github.sha }}'
           # Specify environment variables here
-          env-vars: |
+          env_vars: |
             SPOTIFY_CLIENT_ID='${{ env.SPOTIFY_CLIENT_ID }}'
             SPOTIFY_CLIENT_SECRET='${{ env.SPOTIFY_CLIENT_SECRET }}'
             ALLOWED_ORIGINS='${{ env.ALLOWED_ORIGINS }}'
