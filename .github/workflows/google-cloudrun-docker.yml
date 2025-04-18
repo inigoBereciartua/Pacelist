@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - 'main'
-      - 'gh-actions-test'
 
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT }}
@@ -26,18 +25,25 @@ jobs:
       - name: 'Checkout'
         uses: 'actions/checkout@v4'
 
-      # Set up the service account credentials
+      # Authenticate to Google Cloud using the Service Account key
       - name: 'Set up Google Cloud credentials'
         uses: 'google-github-actions/auth@v2'
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      # Generate an access token for Docker authentication
+      - id: 'auth'
+        name: 'Generate Access Token'
+        run: |
+          ACCESS_TOKEN=$(gcloud auth application-default print-access-token)
+          echo "::set-output name=access_token::$ACCESS_TOKEN"
 
       # Docker login
       - name: 'Docker Auth'
         uses: 'docker/login-action@v3'
         with:
           username: 'oauth2accesstoken'
-          password: '${{ steps.auth.outputs.access_token }}'
+          password: ${{ steps.auth.outputs.access_token }}
           registry: '${{ env.REGION }}-docker.pkg.dev'
 
       # Build and push Docker container to Artifact Registry
