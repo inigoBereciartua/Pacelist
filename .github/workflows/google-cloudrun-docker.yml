@@ -8,10 +8,9 @@ on:
 
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT }}
-  REGION: 'europe-west1'  # Ensure this matches both Cloud Run and Artifact Registry region
-  SERVICE: 'my-service'
-  WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
-  SERVICE_ACCOUNT_EMAIL: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
+  REGION: 'europe-west1'  # Unified region for both Artifact Registry and Cloud Run
+  SERVICE: 'my-service'  # Update to your service name
+  SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SA_KEY }}
 
 jobs:
   deploy:
@@ -27,24 +26,18 @@ jobs:
       - name: 'Checkout'
         uses: 'actions/checkout@v4'
 
-      # Authenticate to Google Cloud using Workload Identity Federation
-      - id: 'auth'
-        name: 'Authenticate to Google Cloud'
+      # Set up the service account credentials
+      - name: 'Set up Google Cloud credentials'
         uses: 'google-github-actions/auth@v2'
         with:
-          workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}'
-
-      # Debug: Check the token to ensure it's being passed correctly
-      - name: 'Debug Authentication Token'
-        run: |-
-          echo 'Auth Token: ${{ steps.auth.outputs.auth_token }}'
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
 
       # Docker login
       - name: 'Docker Auth'
         uses: 'docker/login-action@v3'
         with:
           username: 'oauth2accesstoken'
-          password: '${{ steps.auth.outputs.auth_token }}'
+          password: '${{ steps.auth.outputs.access_token }}'
           registry: '${{ env.REGION }}-docker.pkg.dev'
 
       # Build and push Docker container to Artifact Registry
@@ -54,7 +47,7 @@ jobs:
           docker build --tag "${DOCKER_TAG}" ./backend
           docker push "${DOCKER_TAG}"
 
-      # Deploy to Cloud Run
+      # Deploy the container to Cloud Run
       - id: 'deploy'
         name: 'Deploy to Cloud Run'
         uses: 'google-github-actions/deploy-cloudrun@v2'
