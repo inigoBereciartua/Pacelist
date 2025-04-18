@@ -4,13 +4,18 @@ on:
   push:
     branches:
       - 'main'
+      - 'gh-actions-test'
 
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT }}
-  REGION: 'europe-west1'  # Unified region for both Artifact Registry and Cloud Run
-  SERVICE: 'my-service'  # Update to your service name
-  WORKLOAD_IDENTITY_PROVIDER: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
-  SERVICE_ACCOUNT_EMAIL: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
+  REGION: 'europe-west1'
+  SERVICE: 'pacelist-app-back'
+  SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SA_KEY }}
+  SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+  SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+  ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
+  JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+  LOGIN_REDIRECT_URL: ${{ secrets.LOGIN_REDIRECT_URL }}
 
 jobs:
   deploy:
@@ -26,25 +31,31 @@ jobs:
       - name: 'Checkout'
         uses: 'actions/checkout@v4'
 
-      # Authenticate to Google Cloud using Workload Identity Federation
-      - id: 'auth'
-        name: 'Authenticate to Google Cloud'
+      # Authenticate to Google Cloud using the Service Account key
+      - name: 'Set up Google Cloud credentials'
         uses: 'google-github-actions/auth@v2'
         with:
-          workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}'
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      # Generate an access token for Docker authentication
+      - id: 'auth'
+        name: 'Generate Access Token'
+        run: |
+          ACCESS_TOKEN=$(gcloud auth application-default print-access-token)
+          echo "::set-output name=access_token::$ACCESS_TOKEN"
 
       # Docker login
       - name: 'Docker Auth'
         uses: 'docker/login-action@v3'
         with:
           username: 'oauth2accesstoken'
-          password: '${{ steps.auth.outputs.auth_token }}'
+          password: ${{ steps.auth.outputs.access_token }}
           registry: '${{ env.REGION }}-docker.pkg.dev'
 
       # Build and push Docker container to Artifact Registry
       - name: 'Build and Push Container'
-        run: |-
-          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}"
+        run: |
+          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/my-service/${{ env.SERVICE }}:${{ github.sha }}"
           docker build --tag "${DOCKER_TAG}" ./backend
           docker push "${DOCKER_TAG}"
 
@@ -55,9 +66,15 @@ jobs:
         with:
           service: '${{ env.SERVICE }}'
           region: '${{ env.REGION }}'
-          image: '${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}'
+          image: '${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/my-service/${{ env.SERVICE }}:${{ github.sha }}'
+          # Specify environment variables here
+          env_vars: |
+            SPOTIFY_CLIENT_ID=${{ secrets.SPOTIFY_CLIENT_ID }}
+            SPOTIFY_CLIENT_SECRET=${{ secrets.SPOTIFY_CLIENT_SECRET }}
+            ALLOWED_ORIGINS=${{ secrets.ALLOWED_ORIGINS }}
+            JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
+            LOGIN_REDIRECT_URL=${{ secrets.LOGIN_REDIRECT_URL }}
 
-      # Show Cloud Run URL (optional)
       - name: 'Show output'
         run: |
           echo ${{ steps.deploy.outputs.url }}
