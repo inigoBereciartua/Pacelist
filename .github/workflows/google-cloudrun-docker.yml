@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - 'main'
-      - 'dgh-actions-test'
+      - 'gh-actions-test'
 
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT }}
@@ -36,7 +36,8 @@ jobs:
 
       # Debug: Check the token to ensure it's being passed correctly
       - name: 'Debug Authentication Token'
-        run: echo "Auth Token: ${{ steps.auth.outputs.auth_token }}"
+        run: |-
+          echo 'Auth Token: ${{ steps.auth.outputs.auth_token }}'
 
       # Docker login
       - name: 'Docker Auth'
